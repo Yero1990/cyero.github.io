@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import datetime
 import chart_studio
 import chart_studio.plotly as charts
-
+from datetime import datetime, timedelta
 
 #The initialization step places a special .plotly/.credentials file in your home directory. ( i think only done once)
 #chart_studio.tools.set_credentials_file(username='cyero', api_key='JCKnODSC8EtxOT1GdtND')
@@ -56,27 +56,28 @@ fig.write_html("index.html")
 #how to convert string time_stamp to python formatted timestamp to plot
 #from datetime import datetime, timedelta
 
-#time_stamp= 'Sat Jun 18 13:13:41 2022'
+#In [1]: start_of_run = '2022-06-18 13:13:41'
 
-#In [12]: time_stamp_fmt = datetime.strptime(time_stamp, '%a %b %d %H:%M:%S %Y') make sure to put the correct format of the string
+#In [2]: start_of_run
+#Out[2]: '2022-06-18 13:13:41'
 
-#In [13]: time_stamp_fmt
-#Out[13]: datetime.datetime(2022, 6, 18, 13, 13, 41)
+#In [3]: from datetime import datetime, timedelta
 
-#time_stamp_fmt.timestamp() --> this gives an absolute time number in seconds.
+#In [4]: start_of_run_fmt = datetime.strptime(start_of_run, '%Y-%m-%d %H:%M:%S')
 
-# to add delta time (e.g., run length in seconds) to get the end_time, do:
-#end_time = time_stamp_fmt + timedelta(seconds=3600)  # if a run lasted 1 hour
+#In [5]: start_of_run_fmt
+#Out[5]: datetime.datetime(2022, 6, 18, 13, 13, 41)
 
-#In [24]: time_stamp_fmt
-#Out[24]: datetime.datetime(2022, 6, 18, 13, 13, 41)
+#In [6]: start_of_run_fmt + timedelta(seconds=3600)
+#Out[6]: datetime.datetime(2022, 6, 18, 14, 13, 41)
 
-#In [25]: end_time
-#Out[25]: datetime.datetime(2022, 6, 22, 2, 13, 41)
+#In [7]: end_of_run_fmt = start_of_run_fmt + timedelta(seconds=3600)
 
-# calculate time width of the run (sec)
-#In [26]: end_time.timestamp() - time_stamp_fmt.timestamp()
-#Out[26]: 306000.0
+#In [8]: start_of_run_fmt
+#Out[8]: datetime.datetime(2022, 6, 18, 13, 13, 41)
+
+#In [9]: end_of_run_fmt
+#Out[9]: datetime.datetime(2022, 6, 18, 14, 13, 41)
 
 # calculate mid-point of the run (to put correct tick in center)
 #In [27]: time_stamp_fmt + 0.5*(end_time - time_stamp_fmt)
