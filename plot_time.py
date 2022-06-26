@@ -29,67 +29,56 @@ run_len = (run_end-run_start)
 run_len_ms = run_len.dt.total_seconds() * 1.e3 # run len in millisecond (required for width)
 
 # add new columns to dataframe
-df['run_center'] = run_center
-df['run_len_ms'] = run_len_ms
+df['run_center'] = run_center   # time corresponding to middle of run
+df['run_len_ms'] = run_len_ms   # time corresponding to run length
+
+print(df.loc[1]['start_run'])
+# group cafe configuration
+df_grouped = df.groupby(['target', 'kin\nstudy'])
 
 
-#  APPROACH #1 : grouping dataframe manually based on (target, kin_study)
-# way to splitting dataframe based on specific (target, kin_study) combo for plotting using the go.Bar() command
-# d2_MF = df.loc[(df['target'].str.contains('LD2')) & (df['kin\nstudy'].str.contains('MF'))]
-# d2_SRC = df.loc[(df['target'].str.contains('LD2')) & (df['kin\nstudy'].str.contains('SRC'))]
-
-
-# APPROACH #2: loop over grouped variables (target, kin_study)
 fig = go.Figure()
-for i, group in df.groupby(['target', 'kin\nstudy']):
+for i, group in df_grouped:
 
-   
-    #print(group['target'].to_string())
-    fig.add_trace(go.Bar(x=group['run_center'], y=group['BCM4A\ncharge\n[mC]'], width=group['run_len_ms'], name="%s"%( group['target'].to_string(index=False)+group['kin\nstudy'].to_string(index=False)),
-                         hovertemplate="start_of_run=%s<br>end_of_run=%s<br>target=%s<br><extra></extra>" %
-                         (group['start_run'].to_string(index=False), group['end_run'].to_string(index=False), group['target'].to_string(index=False)) 
-    ))
-    showlegend=False
+    # set name of the configuration (to be put in legend)
+    iname = i[0].strip() + ', ' + i[1].strip()
+
+    #print(type(group['run_center']))
     
-fig.update_layout(legend_title_text = "config")
+    #print('run:',group['run\nnumber'])
+    #print('run:',group['run\nnumber'])
+    #print('run:',df['run\nnumber'])
+    
+    # add figure trace for each configuration
+    fig.add_trace(
 
+        # plot the bar chart
+        go.Bar(x=group['run_center'], y=group['BCM4A\ncharge\n[mC]'], width=group['run_len_ms'],
+
+               # set name of configuration
+               name="%s" % (iname), 
+               
+               # set template for information the user want to appear while hovering over the data
+               hovertemplate="run_number  :%s<br>"
+                             "start_of_run:%s<br>"
+                             "end_of_run  :%s<br>"
+                             "target      :%s<br>"
+                             "kin_study   :%s<br>"
+                             "<extra></extra>" %               
+               (group['run\nnumber'].to_string(index=False),
+                group['start_run'].to_string(index=False),
+                group['end_run'].to_string(index=False),
+                group['target'].to_string(index=False),
+                group['kin\nstudy'].to_string(index=False),
+                
+               ),
+               
+
+              
+        )
+    )
+
+fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
-fig.show()
-
-#fig.add_traces(list(px.line(d2_MF, x=run_center, y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
-#fig.add_trace(go.Bar(x=run_center[], y=charge, width=run_len_ms) )  # width is in milliseconds
-#fig.add_traces(list(px.bar(df, x=['start_run'], y='BCM4A\ncharge\n[mC]', color='target', pattern_shape="kin\nstudy").select_traces()))
-
 #fig.show()
-
-
-'''
-run_len1 = 3600. 
-run_len2 = 1500. 
-
-#convert to datetime object to calculate center and end time
-run1_start = datetime.strptime(run1_start, '%Y-%m-%d %H:%M:%S')
-run1_end = run1_start + timedelta(seconds=run_len1)
-run1_center = run1_start + 0.5*(run1_end - run1_start)
-
-run2_start = datetime.strptime(run2_start, '%Y-%m-%d %H:%M:%S')
-run2_end = run2_start + timedelta(seconds=run_len2)
-run2_center = run2_start + 0.5*(run2_end - run2_start)
-
-arr = [run1_center, run2_center]
-
-#convert run length (width from sec to milliseconds, as this is the unit it takes)
-run_len1 =  run_len1*1e3
-run_len2 =  run_len2*1e3
-
-fig = go.Figure()
-
-fig.add_trace(go.Bar(x=[run1_center, run2_center], y=[10,8], width=[run_len1, run_len2]))  # width is in milliseconds
-
-
-
-
-fig.show()
-
-'''
