@@ -23,11 +23,12 @@ target = df['target']
 run_start = pd.to_datetime(df['start_run'])
 run_end = pd.to_datetime(df['end_run'])
 run_center = run_start + 0.5*(run_end-run_start)
-run_len = (run_end-run_start)
-run_len_ms = run_len.dt.total_seconds() * 1.e3 # run len in millisecond (required for width)
+run_len = (run_end-run_start)                   # run length 
+run_len_ms = run_len.dt.total_seconds() * 1.e3 # run length  in millisecond (required for width)
 
 # add new columns to dataframe
 df['run_center'] = run_center   # time corresponding to middle of run
+df['run_len'] = run_len.dt.total_seconds()   # run length in sec
 df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
 # group cafe configuration
@@ -179,18 +180,26 @@ for targ in cafe_dict['target_names']:
                        name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
 
                        #hovertext = "%s" % df_select['run\nnumber']
-                       hovertemplate="run_number  :%s<br>"
-                       "start_of_run:%s<br>"
-                       "end_of_run  :%s<br>"
-                       "target      :%s<br>"
-                       "kin_study   :%s<br>"
-                       "<extra></extra>" %
+                           hovertemplate="run_number    :%s<br>"
+                                         "start_of_run  :%s<br>"
+                                         "end_of_run    :%s<br>"
+                                         "run_length [sec] :%s<br>"
+                                         "beam_time  [sec] :%s<br>"
+                                         "target        :%s<br>"
+                                         "kin_study     :%s<br>"
+                                         "BCM4A current [uA] :%s<br>"
+                                         "BCM4A charge  [mC] :%s<br>"
+                                         "<extra></extra>" %
                        (
                            df_select['run\nnumber'].to_string(index=False),
                            df_select['start_run'].to_string(index=False),
                            df_select['end_run'].to_string(index=False),
+                           df_select['run_len'].to_string(index=False),
+                           df_select['beam_on_target\n[sec]'].to_string(index=False),
                            df_select['target'].to_string(index=False),
                            df_select['kin\nstudy'].to_string(index=False),
+                           df_select['BCM4A\ncurrent\n[uA]'].to_string(index=False),
+                           df_select['BCM4A\ncharge\n[mC]'].to_string(index=False),
                            
                        )
                        
@@ -225,18 +234,27 @@ for targ in cafe_dict['target_names']:
 
 
                            #hovertext = "%s" % df_select['run\nnumber'][index_label],
-                           hovertemplate="run_number  :%s<br>"
-                           "start_of_run:%s<br>"
-                           "end_of_run:%s<br>"
-                           "target      :%s<br>"
-                           "kin_study   :%s<br>"
-                           "<extra></extra>" %
+                           hovertemplate="run_number    :%s<br>"
+                                         "start_of_run  :%s<br>"
+                                         "end_of_run    :%s<br>"
+                                         "run_length [sec] :%s<br>"
+                                         "beam_time  [sec] :%s<br>"
+                                         "target        :%s<br>"
+                                         "kin_study     :%s<br>"
+                                         "BCM4A current [uA] :%s<br>"
+                                         "BCM4A charge  [mC] :%s<br>"
+                                         "<extra></extra>" %
                            (
                                df_select['run\nnumber'][index_label],
                                df_select['start_run'][index_label],
                                df_select['end_run'][index_label],
+                               df_select['run_len'][index_label],
+                               df_select['beam_on_target\n[sec]'][index_label],
                                df_select['target'][index_label],
                                df_select['kin\nstudy'][index_label],
+                               df_select['BCM4A\ncurrent\n[uA]'][index_label],
+                               df_select['BCM4A\ncharge\n[mC]'][index_label],
+
 
                            ),
 
