@@ -126,13 +126,15 @@ cafe_dict = {
     },
 
     'kinematic_study' : {
-        'heep_coin',
-        'MF',
-        'SRC'
+        'LH2' : {'heep_singles', 'heep_coin'},
+        'LD2' : {'MF', 'SRC'},
+        'Ca48': {'MF', 'SRC'},
+        
     },
 
     'color' : {
-        'LH2' : { 'heep_coin': 'rgba(169, 169, 169, 0.8)' },  
+        'LH2' : { 'heep_singles': 'rgba(169, 169, 169, 0.8)',
+                  'heep_coin': 'rgba(169, 169, 169, 0.8)'},  
 
         'LD2' : { 'MF'       : 'rgba(220, 220, 220, 0.8)' ,  
                   'SRC'      : 'rgba(220, 220, 220, 0.8)'},  
@@ -148,17 +150,19 @@ cafe_dict = {
 #kinematic_study = ['heep_singles', 'heep_coin', 'MF', 'SRC']
 
 for targ in cafe_dict['target_names']:
-    for kin in cafe_dict['kinematic_study']:
+    for kin in cafe_dict['kinematic_study'][targ]:
 
+        #print('targ, kin:', targ, kin)
         # set color
-        #bar_color = cafe_dict['color'][targ][kin]
+        bar_color = cafe_dict['color'][targ][kin]
+        #print(bar_color)
         
         # selected dataframe
         df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin))]
-
+        
         #print(df_select.shape[0])
         if(df_select.shape[0]<2):
-            print('targ, kin -->', targ, kin)
+            #print('targ, kin -->', targ, kin)
             fig.add_trace(
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
                        name="%s, %s" % (targ, kin), marker = {'color' : cafe_dict['color'][targ][kin]},
@@ -166,28 +170,36 @@ for targ in cafe_dict['target_names']:
                 )
             )
         else:
-            print(df_select.shape[0])
-            
+            #print(df_select.shape[0])
+            cnt = 0 # counter
             for (index_label, row_series) in df_select.iterrows():
 
+                print(row_series)
                 # need single dataframe values to be type list for plotting
-                print('Row Index label : ', index_label)
+                #print('Row Index label : ', index_label)
                 x_list = []
                 y_list = []
                 w_list = []
                 x_list.append(df_select['run_center'][index_label])
                 y_list.append(df_select['BCM4A\ncharge\n[mC]'][index_label])
                 w_list.append(df_select['run_len_ms'][index_label])
-                print('list = ',x_list)
+                #print('list = ',x_list)
+                
+                if cnt==0:
+                    showlegend_flag = True
+                else:
+                    showlegend_flag = False
 
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
-                           name="%s, %s" % (targ, kin), marker = {'color' : cafe_dict['color'][targ][kin]},
-                           hovertext = "%s" % df_select['run\nnumber'][index_label]  # or hoverinfo = "y"                   
+                           name="%s, %s" % (targ, kin), legendgroup='%s_%s' % (targ, kin), marker = {'color' : cafe_dict['color'][targ][kin]},
+                           hovertext = "%s" % df_select['run\nnumber'][index_label], showlegend=showlegend_flag  # or hoverinfo = "y"                   
                     )
                 )
-         
                 
+                cnt = cnt+1 #counter
+         
+        
 
 fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
