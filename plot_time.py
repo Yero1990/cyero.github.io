@@ -16,8 +16,6 @@ exp_end = datetime(2018,4,9).timestamp()
 # convert csv to dataframe 
 df = pd.read_csv("cafe-2022_runlist.csv") 
 
-#group by target and kinematic_type, then do cumulative sum of charge
-charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]']
@@ -179,8 +177,24 @@ for targ in cafe_dict['target_names']:
             fig.add_trace(
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
                        name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
-                       hovertext = "%s" % df_select['run\nnumber']  # or hoverinfo = "y"                   
-                ), print('(targ, kin):',targ,',',kin,'-->',bar_color)
+
+                       #hovertext = "%s" % df_select['run\nnumber']
+                       hovertemplate="run_number  :%s<br>"
+                       "start_of_run:%s<br>"
+                       "end_of_run  :%s<br>"
+                       "target      :%s<br>"
+                       "kin_study   :%s<br>"
+                       "<extra></extra>" %
+                       (
+                           df_select['run\nnumber'].to_string(index=False),
+                           df_select['start_run'].to_string(index=False),
+                           df_select['end_run'].to_string(index=False),
+                           df_select['target'].to_string(index=False),
+                           df_select['kin\nstudy'].to_string(index=False),
+                           
+                       )
+                       
+                ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
             )
 
             # add cumulative charge line
@@ -208,14 +222,43 @@ for targ in cafe_dict['target_names']:
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
                            name="%s, %s" % (targ, kin), legendgroup='%s_%s' % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
-                           hovertext = "%s" % df_select['run\nnumber'][index_label], showlegend=showlegend_flag  # or hoverinfo = "y"                   
-                    ), print('(targ, kin):',targ,',',kin,'-->',bar_color)
+
+
+                           #hovertext = "%s" % df_select['run\nnumber'][index_label],
+                           hovertemplate="run_number  :%s<br>"
+                           "start_of_run:%s<br>"
+                           "end_of_run:%s<br>"
+                           "target      :%s<br>"
+                           "kin_study   :%s<br>"
+                           "<extra></extra>" %
+                           (
+                               df_select['run\nnumber'][index_label],
+                               df_select['start_run'][index_label],
+                               df_select['end_run'][index_label],
+                               df_select['target'][index_label],
+                               df_select['kin\nstudy'][index_label],
+
+                           ),
+
+                           showlegend=showlegend_flag                  
+                    ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
                 )
                 
                 cnt = cnt+1 #counter
 
+
+
+#group by target and kinematic_type, then do cumulative sum of charge
+#charge_list = [] 
+charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
+
+print('charge_csum-->',charge_csum)
+print(df['run_center'])
+#print('charge_csum_type-->',type(charge_csum))
+
 # add lines representing cumulative charge
-fig.add_traces(list(px.line(df, x='run_center', y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
+#fig.add_traces(list(px.line(df, x='run_center', y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
+fig.add_traces(list(px.line(x=df['run_center'], y=charge_csum, title='cumulative charge', color=df['target'], line_dash=df['kin\nstudy'], markers=True).select_traces()))
 
 
 fig.update_layout(legend_title_text = "CaFe Configuration")
