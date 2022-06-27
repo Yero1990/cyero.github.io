@@ -279,6 +279,21 @@ fig.add_traces(list(px.line(x=df['run_center'], y=charge_csum, title='cumulative
                             hover_name=df['cumulative_charge'], hover_data=[df['target']]).select_traces() ))
 
 
+last_x = df.groupby(['target', 'kin\nstudy']).last()['run_center']
+last_y = df.groupby(['target', 'kin\nstudy']).last()['cumulative_charge']
+
+cnt=0
+for idx, val in last_y.items():  
+    fig.add_annotation(x=last_x[cnt], y=last_y[cnt], xref="x", yref="y",
+                       text=f"<b>total_charge: %s  mC</b>" %last_y[cnt], showarrow=False,
+                       font=dict(
+                           family="Arial, sans-serif",
+                           color='black',
+                           size=16),
+                       bgcolor="yellow"
+    )
+    cnt=cnt+1
+
 fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
