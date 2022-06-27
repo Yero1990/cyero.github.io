@@ -131,7 +131,7 @@ for targ in cafe_dict['target_names']:
 
             # add cumulative charge line
             fig.add_trace(
-                go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
+                go.Scatter( x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
             )
             
             # add bar chart
@@ -196,7 +196,7 @@ for targ in cafe_dict['target_names']:
 
                 # add cumulative charge line
                 fig.add_trace(
-                    go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style) )
+                    go.Scatter(name="%s, %s charge" % (targ, kin), x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style) )
                 )
                 
                 fig.add_trace(
