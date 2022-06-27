@@ -136,28 +136,41 @@ cafe_dict = {
         'LH2' : { 'heep_singles': 'rgba(169, 169, 169, 0.8)',
                   'heep_coin': 'rgba(169, 169, 169, 0.8)'},  
 
-        'LD2' : { 'MF'       : 'rgba(220, 220, 220, 0.8)' ,  
-                  'SRC'      : 'rgba(220, 220, 220, 0.8)'},  
+        'LD2' : { 'MF'       : 'rgba(3, 138, 255, 0.8)' ,  
+                  'SRC'      : 'rgba(3, 138, 225, 0.8)'},  
 
-        'Ca48' : { 'MF'       : 'rgba(255, 127, 14, 0.8)', 
-                   'SRC'      : 'rgba(255, 127, 14, 0.8)'},  
+        'Ca48' : { 'MF'       : 'rgba(99, 110, 250, 0.8)', 
+                   'SRC'      : 'rgba(99, 110, 250, 0.8)'},  
+
+    },
+
+    'pattern' : {
+        'LH2' : { 'heep_singles': '',
+                  'heep_coin': ''},  
+
+        'LD2' : { 'MF'       : '' ,  
+                  'SRC'      : '+'},  
+
+        'Ca48' : { 'MF'       : '', 
+                   'SRC'      : '.'},  
 
     },
     
+
 }
 
-#target_names = ['LH2', 'LD2', 'C12', 'Ca48']
-#kinematic_study = ['heep_singles', 'heep_coin', 'MF', 'SRC']
+
 
 for targ in cafe_dict['target_names']:
     for kin in cafe_dict['kinematic_study'][targ]:
 
         #print('targ, kin:', targ, kin)
-        # set color
-        bar_color = cafe_dict['color'][targ][kin]
+        # set color and pattern
+        bar_color   = cafe_dict['color'][targ][kin]
+        bar_pattern = cafe_dict['pattern'][targ][kin]
         #print(bar_color)
         
-        # selected dataframe
+        # selected dataframe @ selected  (targ,kin)
         df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin))]
         
         #print(df_select.shape[0])
@@ -165,16 +178,18 @@ for targ in cafe_dict['target_names']:
             #print('targ, kin -->', targ, kin)
             fig.add_trace(
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
-                       name="%s, %s" % (targ, kin), marker = {'color' : cafe_dict['color'][targ][kin]},
+                       name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
                        hovertext = "%s" % df_select['run\nnumber']  # or hoverinfo = "y"                   
-                )
+                ), print('(targ, kin):',targ,',',kin,'-->',bar_color)
             )
+
+            # add cumulative charge line
+
         else:
             #print(df_select.shape[0])
             cnt = 0 # counter
             for (index_label, row_series) in df_select.iterrows():
 
-                print(row_series)
                 # need single dataframe values to be type list for plotting
                 #print('Row Index label : ', index_label)
                 x_list = []
@@ -192,14 +207,16 @@ for targ in cafe_dict['target_names']:
 
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
-                           name="%s, %s" % (targ, kin), legendgroup='%s_%s' % (targ, kin), marker = {'color' : cafe_dict['color'][targ][kin]},
+                           name="%s, %s" % (targ, kin), legendgroup='%s_%s' % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
                            hovertext = "%s" % df_select['run\nnumber'][index_label], showlegend=showlegend_flag  # or hoverinfo = "y"                   
-                    )
+                    ), print('(targ, kin):',targ,',',kin,'-->',bar_color)
                 )
                 
                 cnt = cnt+1 #counter
-         
-        
+
+# add lines representing cumulative charge
+fig.add_traces(list(px.line(df, x='run_center', y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
+
 
 fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
