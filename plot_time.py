@@ -269,14 +269,14 @@ for targ in cafe_dict['target_names']:
 #group by target and kinematic_type, then do cumulative sum of charge
 #charge_list = [] 
 charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
+df['cumulative_charge'] = charge_csum
 
-print('charge_csum-->',charge_csum)
-print(df['run_center'])
 #print('charge_csum_type-->',type(charge_csum))
 
 # add lines representing cumulative charge
 #fig.add_traces(list(px.line(df, x='run_center', y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
-fig.add_traces(list(px.line(x=df['run_center'], y=charge_csum, title='cumulative charge', color=df['target'], line_dash=df['kin\nstudy'], markers=True).select_traces()))
+fig.add_traces(list(px.line(x=df['run_center'], y=charge_csum, title='cumulative charge', color=df['target'], line_dash=df['kin\nstudy'], markers=True,
+                            hover_name=df['cumulative_charge'], hover_data=[df['target']]).select_traces() ))
 
 
 fig.update_layout(legend_title_text = "CaFe Configuration")
