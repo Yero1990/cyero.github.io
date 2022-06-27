@@ -31,91 +31,11 @@ df['run_center'] = run_center   # time corresponding to middle of run
 df['run_len'] = run_len.dt.total_seconds()   # run length in sec
 df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
-# group cafe configuration
-#df_grouped = df.groupby(['target', 'kin\nstudy'])
 
+# calculate cumulative quantities
+charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
+df['cumulative_charge'] = charge_csum
 
-fig = go.Figure()
-'''
-for i, group in df_grouped:
-
-    # set name of the configuration (to be put in legend)
-    iname = i[0].strip() + ', ' + i[1].strip()
-
-    print(group)
-    print(group['run_center'])
-    
-    #print('run:',group['run\nnumber'])
-    #print('run:',group['run\nnumber'])
-    #print('run:',df['run\nnumber'])
-    
-    # add figure trace for each configuration
-    fig.add_trace(
-        #print('counter'),
-        # plot the bar chart
-        go.Bar(x=group['run_center'], y=group['BCM4A\ncharge\n[mC]'], width=group['run_len_ms'],
-
-               # set name of configuration
-               name="%s" % (iname), 
-               
-               # set template for information the user want to appear while hovering over the data
-               hovertemplate="run_number  :%s<br>"
-                             #"start_of_run:%s<br>"
-                             #"end_of_run  :%s<br>"
-                             #"target      :%s<br>"
-                             #"kin_study   :%s<br>"
-                             "<extra></extra>" %               
-               (
-               group['run\nnumber'].to_string(index=False),
-               # group['start_run'].to_string(index=False),
-               # group['end_run'].to_string(index=False),
-               # group['target'].to_string(index=False),
-               # group['kin\nstudy'].to_string(index=False),                
-               ),
-              
-        ),
-        
-    )
-
-
-# add figure trace for each configuration
-
-#fig.add_trace(
-#    go.Bar(x=df['run_center'], y=df['BCM4A\ncharge\n[mC]'], width=df['run_len_ms'],name="trace")        
-#)
-
-
-#fig.update_layout(legend_title_text = "CaFe Configuration")
-#fig.update_xaxes(title_text="Date")
-#fig.update_yaxes(title_text="Charge [mC]")
-#fig.show()
-
-# slice the dataframe into (target, kin_study config)
-h2_singles_df = df[(df['target'].str.contains('LH2')) & (df['kin\nstudy'].str.contains('heep_singles'))]
-h2_coin_df = df[(df['target'].str.contains('LH2')) & (df['kin\nstudy'].str.contains('heep_coin'))]
-
-d2_MF_df = df[(df['target'].str.contains('LD2')) & (df['kin\nstudy'].str.contains('MF'))]
-d2_SRC_df = df[(df['target'].str.contains('LD2')) & (df['kin\nstudy'].str.contains('SRC'))]
-
-Ca48_MF_df = df[(df['target'].str.contains('Ca48')) & (df['kin\nstudy'].str.contains('MF'))]
-Ca48_SRC_df = df[(df['target'].str.contains('Ca48')) & (df['kin\nstudy'].str.contains('SRC'))]
-
-
-# add figure trace for each configuration
-fig.add_trace(go.Bar(x=h2_coin_df['run_center'], y=h2_coin_df['BCM4A\ncharge\n[mC]'], width=h2_coin_df['run_len_ms'],name="LH2, heep_coin"))
-fig.add_trace(go.Bar(x=d2_MF_df['run_center'], y=d2_MF_df['BCM4A\ncharge\n[mC]'], width=d2_MF_df['run_len_ms'],name="LD2, MF"))
-fig.add_trace(go.Bar(x=d2_SRC_df['run_center'], y=d2_SRC_df['BCM4A\ncharge\n[mC]'], width=d2_SRC_df['run_len_ms'],name="LD2, SRC"))        
-
-fig.add_trace(go.Bar(x=Ca48_MF_df['run_center'], y=Ca48_MF_df['BCM4A\ncharge\n[mC]'], width=Ca48_MF_df['run_len_ms'],name="Ca48, MF"))
-fig.add_trace(go.Bar(x=Ca48_SRC_df['run_center'], y=Ca48_SRC_df['BCM4A\ncharge\n[mC]'], width=Ca48_SRC_df['run_len_ms'],name="Ca48, SRC"))        
-
-
-
-fig.update_layout(legend_title_text = "CaFe Configuration")
-fig.update_xaxes(title_text="Date")
-fig.update_yaxes(title_text="Charge [mC]")
-#fig.show()
-'''
 
 cafe_dict = {
     'target_names' : {
@@ -132,14 +52,23 @@ cafe_dict = {
     },
 
     'color' : {
-        'LH2' : { 'heep_singles': 'rgba(169, 169, 169, 0.8)',
-                  'heep_coin': 'rgba(169, 169, 169, 0.8)'},  
 
-        'LD2' : { 'MF'       : 'rgba(3, 138, 255, 0.8)' ,  
-                  'SRC'      : 'rgba(3, 138, 225, 0.8)'},  
+        # rgb(227, 119, 194) pink
+        # rgb(127, 127, 127) gray
+        # rgb(188, 189, 34)  lime
+        # rgb(23, 190, 207)  blue
+        # rgb(255, 127, 14)  orange
+        # rgb(44, 160, 44)   green
+        # rgb(148, 103, 189) purple
+        # rgb(214, 39, 40)   red
+        'LH2' : { 'heep_singles': 'rgba(227, 119, 194, 0.5)',
+                  'heep_coin': 'rgba(227, 119, 194, 0.5)'},  
 
-        'Ca48' : { 'MF'       : 'rgba(99, 110, 250, 0.8)', 
-                   'SRC'      : 'rgba(99, 110, 250, 0.8)'},  
+        'LD2' : { 'MF'       : 'rgba(44, 160, 44, 0.5)' ,   
+                  'SRC'      : 'rgba(44, 160, 44, 0.5)'},  
+
+        'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.5)',   
+                   'SRC'      : 'rgba(148, 103, 189, 0.5)'},  
 
     },
 
@@ -148,10 +77,22 @@ cafe_dict = {
                   'heep_coin': ''},  
 
         'LD2' : { 'MF'       : '' ,  
-                  'SRC'      : '+'},  
+                  'SRC'      : '.'},  
 
         'Ca48' : { 'MF'       : '', 
                    'SRC'      : '.'},  
+
+    },
+
+    'linestyle' : {
+        'LH2' : { 'heep_singles': 'solid',
+                  'heep_coin': 'dash'},  
+        
+        'LD2' : { 'MF'       : 'solid' ,  
+                  'SRC'      : 'dash'},  
+        
+        'Ca48' : { 'MF'       : 'solid', 
+                   'SRC'      : 'dash'},  
 
     },
     
@@ -160,22 +101,42 @@ cafe_dict = {
 
 
 
+fig = go.Figure()
+
 for targ in cafe_dict['target_names']:
     for kin in cafe_dict['kinematic_study'][targ]:
 
         #print('targ, kin:', targ, kin)
-        # set color and pattern
+        # set color, pattern and line style
         bar_color   = cafe_dict['color'][targ][kin]
         bar_pattern = cafe_dict['pattern'][targ][kin]
+        line_style  = cafe_dict['linestyle'][targ][kin]
+        
         #print(bar_color)
         
         # selected dataframe @ selected  (targ,kin)
         df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin))]
-        
+
+
         #print(df_select.shape[0])
-        if(df_select.shape[0]<2):
-            #print('targ, kin -->', targ, kin)
+        if(df_select.shape[0]>0 and df_select.shape[0]<2):
+
+            #fig.add_trace(
+            #go.Scatter(y=df_select['BCM4A\ncharge\n[mC]'])
+            #)
+            
+            print('targ, kin : ', targ,',',kin)
+            print('x: ', df_select['run_center'])
+            print('y: ', df_select['BCM4A\ncharge\n[mC]'])
+
+            # add cumulative charge line
             fig.add_trace(
+                go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
+            )
+            
+            # add bar chart
+            fig.add_trace(
+                
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
                        name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
 
@@ -203,10 +164,15 @@ for targ in cafe_dict['target_names']:
                            
                        )
                        
-                ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
-            )
+                ), #end go.Bar
+     
+                
 
-            # add cumulative charge line
+            
+            ) # end add_trace
+
+
+
 
         else:
             #print(df_select.shape[0])
@@ -228,6 +194,11 @@ for targ in cafe_dict['target_names']:
                 else:
                     showlegend_flag = False
 
+                # add cumulative charge line
+                fig.add_trace(
+                    go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style) )
+                )
+                
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
                            name="%s, %s" % (targ, kin), legendgroup='%s_%s' % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
@@ -260,27 +231,26 @@ for targ in cafe_dict['target_names']:
 
                            showlegend=showlegend_flag                  
                     ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
-                )
+
+                ) # end fig.add_trace
                 
                 cnt = cnt+1 #counter
 
+                
 
 
-#group by target and kinematic_type, then do cumulative sum of charge
-#charge_list = [] 
-charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
-df['cumulative_charge'] = charge_csum
 
-#print('charge_csum_type-->',type(charge_csum))
-
-# add lines representing cumulative charge
-#fig.add_traces(list(px.line(df, x='run_center', y=charge_csum, title='cumulative charge', color='target', line_dash='kin\nstudy', markers=True).select_traces()))
-fig.add_traces(list(px.line(x=df['run_center'], y=charge_csum, title='cumulative charge', color=df['target'], line_dash=df['kin\nstudy'], markers=True,
-                            hover_name=df['cumulative_charge'], hover_data=[df['target']]).select_traces() ))
-
+                
+#-------------------------------------------------------------
+#
+# Add annotation for total charge
+# at the end of each line trace
+#
+#-------------------------------------------------------------
 
 last_x = df.groupby(['target', 'kin\nstudy']).last()['run_center']
 last_y = df.groupby(['target', 'kin\nstudy']).last()['cumulative_charge']
+
 
 cnt=0
 for idx, val in last_y.items():  
@@ -294,7 +264,15 @@ for idx, val in last_y.items():
     )
     cnt=cnt+1
 
+#-------------------------------------------------------------
+
+
 fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
+
+# create .html interactive plot 
+fig.write_html("index.html")
+
 fig.show()
+
