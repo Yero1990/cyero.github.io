@@ -18,7 +18,7 @@ df = pd.read_csv("cafe-2022_runlist.csv")
 
 
 run     = df['run\nnumber']
-charge = df['BCM4A\ncharge\n[mC]']
+charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
 target = df['target']
 run_start = pd.to_datetime(df['start_run'])
 run_end = pd.to_datetime(df['end_run'])
@@ -33,8 +33,8 @@ df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
 
 # calculate cumulative quantities
-charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum()
-df['cumulative_charge'] = charge_csum
+charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum() 
+df['cumulative_charge'] = charge_csum 
 
 
 cafe_dict = {
@@ -53,6 +53,7 @@ cafe_dict = {
 
     'color' : {
 
+        # rgb(31, 119, 180) muted blue
         # rgb(227, 119, 194) pink
         # rgb(127, 127, 127) gray
         # rgb(188, 189, 34)  lime
@@ -61,14 +62,14 @@ cafe_dict = {
         # rgb(44, 160, 44)   green
         # rgb(148, 103, 189) purple
         # rgb(214, 39, 40)   red
-        'LH2' : { 'heep_singles': 'rgba(227, 119, 194, 0.5)',
-                  'heep_coin': 'rgba(227, 119, 194, 0.5)'},  
+        'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',
+                  'heep_coin': 'rgba(227, 119, 194, 0.8)'},  
 
-        'LD2' : { 'MF'       : 'rgba(44, 160, 44, 0.5)' ,   
-                  'SRC'      : 'rgba(44, 160, 44, 0.5)'},  
+        'LD2' : { 'MF'       : 'rgba(148, 103, 189, 0.8)' ,   
+                  'SRC'      : 'rgba(214, 39, 40, 0.8)'},  
 
-        'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.5)',   
-                   'SRC'      : 'rgba(148, 103, 189, 0.5)'},  
+        'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                   'SRC'      : 'rgba(148, 103, 189, 0.8)'},  
 
     },
 
@@ -77,10 +78,10 @@ cafe_dict = {
                   'heep_coin': ''},  
 
         'LD2' : { 'MF'       : '' ,  
-                  'SRC'      : '.'},  
+                  'SRC'      : '/'},  
 
         'Ca48' : { 'MF'       : '', 
-                   'SRC'      : '.'},  
+                   'SRC'      : '\\'},  
 
     },
 
@@ -130,9 +131,9 @@ for targ in cafe_dict['target_names']:
             print('y: ', df_select['BCM4A\ncharge\n[mC]'])
 
             # add cumulative charge line
-            fig.add_trace(
-                go.Scatter( x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
-            )
+            #fig.add_trace(
+            #    go.Scatter( x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
+            #)
             
             # add bar chart
             fig.add_trace(
@@ -142,23 +143,23 @@ for targ in cafe_dict['target_names']:
 
                        #hovertext = "%s" % df_select['run\nnumber']
                            hovertemplate="run_number    :%s<br>"
+                                         "target        :%s<br>"
+                                         "kin_study     :%s<br>"
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
                                          "run_length [sec] :%s<br>"
                                          "beam_time  [sec] :%s<br>"
-                                         "target        :%s<br>"
-                                         "kin_study     :%s<br>"
-                                         "BCM4A current [uA] :%s<br>"
-                                         "BCM4A charge  [mC] :%s<br>"
+                                         "beam_current [uA] :%s<br>"
+                                         "beam_charge  [mC] :%s<br>"
                                          "<extra></extra>" %
                        (
                            df_select['run\nnumber'].to_string(index=False),
+                           df_select['target'].to_string(index=False),
+                           df_select['kin\nstudy'].to_string(index=False),
                            df_select['start_run'].to_string(index=False),
                            df_select['end_run'].to_string(index=False),
                            df_select['run_len'].to_string(index=False),
-                           df_select['beam_on_target\n[sec]'].to_string(index=False),
-                           df_select['target'].to_string(index=False),
-                           df_select['kin\nstudy'].to_string(index=False),
+                           df_select['beam_on_target\n[sec]'].to_string(index=False),                          
                            df_select['BCM4A\ncurrent\n[uA]'].to_string(index=False),
                            df_select['BCM4A\ncharge\n[mC]'].to_string(index=False),
                            
@@ -196,7 +197,10 @@ for targ in cafe_dict['target_names']:
 
                 # add cumulative charge line
                 fig.add_trace(
-                    go.Scatter(name="%s, %s charge" % (targ, kin), x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style) )
+                    go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
+                               hovertemplate = 'total_charge: %{y:.3f} [mC]<extra></extra>'
+
+                    )
                 )
                 
                 fig.add_trace(
@@ -206,23 +210,23 @@ for targ in cafe_dict['target_names']:
 
                            #hovertext = "%s" % df_select['run\nnumber'][index_label],
                            hovertemplate="run_number    :%s<br>"
+                                         "target        :%s<br>"
+                                         "kin_study     :%s<br>"
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
                                          "run_length [sec] :%s<br>"
-                                         "beam_time  [sec] :%s<br>"
-                                         "target        :%s<br>"
-                                         "kin_study     :%s<br>"
-                                         "BCM4A current [uA] :%s<br>"
-                                         "BCM4A charge  [mC] :%s<br>"
+                                         "beam_time  [sec] :%s<br>"                                       
+                                         "beam_current [uA] :%s<br>"
+                                         "beam_charge  [mC] :%s<br>"
                                          "<extra></extra>" %
                            (
                                df_select['run\nnumber'][index_label],
+                               df_select['target'][index_label],
+                               df_select['kin\nstudy'][index_label],
                                df_select['start_run'][index_label],
                                df_select['end_run'][index_label],
                                df_select['run_len'][index_label],
-                               df_select['beam_on_target\n[sec]'][index_label],
-                               df_select['target'][index_label],
-                               df_select['kin\nstudy'][index_label],
+                               df_select['beam_on_target\n[sec]'][index_label],                
                                df_select['BCM4A\ncurrent\n[uA]'][index_label],
                                df_select['BCM4A\ncharge\n[mC]'][index_label],
 
@@ -248,21 +252,23 @@ for targ in cafe_dict['target_names']:
 #
 #-------------------------------------------------------------
 
-last_x = df.groupby(['target', 'kin\nstudy']).last()['run_center']
-last_y = df.groupby(['target', 'kin\nstudy']).last()['cumulative_charge']
+#last_x = df.groupby(['target', 'kin\nstudy']).last()['run_center']
+#last_y = df.groupby(['target', 'kin\nstudy']).last()['cumulative_charge']
 
 
-cnt=0
-for idx, val in last_y.items():  
-    fig.add_annotation(x=last_x[cnt], y=last_y[cnt], xref="x", yref="y",
-                       text=f"<b>total_charge: %s  mC</b>" %last_y[cnt], showarrow=False,
-                       font=dict(
-                           family="Arial, sans-serif",
-                           color='black',
-                           size=16),
-                       bgcolor="yellow"
-    )
-    cnt=cnt+1
+#cnt=0
+#for idx, val in last_y.items():
+#    print('last_x.shape: ',last_x.shape)
+#    print('last_y.shape: ',last_y.shape)
+#    fig.add_annotation(x=last_x[cnt], y=last_y[cnt] + last_y[cnt]*0.15, xref="x", yref="y",
+#                       text=f"<b>total_charge: %s  mC</b>" %last_y[cnt], showarrow=False,
+#                       font=dict(
+#                           family="Arial, sans-serif",
+#                           color='black',
+#                           size=12),
+#                       bgcolor="white"
+#    )
+#    cnt=cnt+1
 
 #-------------------------------------------------------------
 
@@ -270,7 +276,7 @@ for idx, val in last_y.items():
 fig.update_layout(legend_title_text = "CaFe Configuration")
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
-
+#fig.update_yaxes(type="log")
 # create .html interactive plot 
 fig.write_html("index.html")
 

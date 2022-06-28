@@ -7,7 +7,7 @@ RUNNUM=3294
 
 exists_flag = False
 
-f= open('test.csv', 'r')
+f= open('test.csv', 'r') 
 lines = csv.reader(f, delimiter=',')
 
 idx=0
