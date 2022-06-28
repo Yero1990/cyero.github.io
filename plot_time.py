@@ -103,6 +103,12 @@ cafe_dict = {
 
 
 fig = go.Figure()
+fig = make_subplots(
+    rows=2, cols=2,
+    specs=[[{"colspan": 2}, None],
+           [{}, {}],
+    ],
+    subplot_titles=("First Subplot","Second Subplot", "Third Subplot"))
 
 for targ in cafe_dict['target_names']:
     for kin in cafe_dict['kinematic_study'][targ]:
@@ -166,7 +172,7 @@ for targ in cafe_dict['target_names']:
                        )
                        
                 ), #end go.Bar
-     
+                row=1, col=1
                 
 
             
@@ -200,7 +206,8 @@ for targ in cafe_dict['target_names']:
                     go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
                                hovertemplate = 'total_charge: %{y:.3f} [mC]<extra></extra>'
 
-                    )
+                    ),
+                    row=1, col=1
                 )
                 
                 fig.add_trace(
@@ -236,6 +243,8 @@ for targ in cafe_dict['target_names']:
                            showlegend=showlegend_flag                  
                     ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
 
+                    row=1, col=1
+                    
                 ) # end fig.add_trace
                 
                 cnt = cnt+1 #counter
@@ -278,7 +287,29 @@ fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
 #fig.update_yaxes(type="log")
 # create .html interactive plot 
-fig.write_html("index.html")
+#fig.write_html("index.html")
 
-fig.show()
+#fig.show()
 
+
+
+fig2 = make_subplots(
+    rows=2, cols=2,
+    specs=[[{}, {}],
+           [{"colspan": 2}, None]],
+    subplot_titles=("First Subplot","Second Subplot", "Third Subplot"))
+
+fig2.add_trace(go.Scatter(x=[1, 2], y=[1, 2]),
+                 row=1, col=1)
+
+fig2.add_trace(go.Scatter(x=[1, 2], y=[1, 2]),
+                 row=1, col=2)
+fig2.add_trace(go.Scatter(x=[1, 2, 3], y=[2, 1, 2]),
+                 row=2, col=1)
+
+fig2.update_layout(showlegend=False, title_text="Specs with Subplot Title")
+
+
+with open('p_graph.html', 'a') as f:
+    f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
