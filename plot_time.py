@@ -31,10 +31,29 @@ df['run_center'] = run_center   # time corresponding to middle of run
 df['run_len'] = run_len.dt.total_seconds()   # run length in sec
 df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
-
 # calculate cumulative quantities
 charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum() 
 df['cumulative_charge'] = charge_csum 
+
+
+# create a new column in the dataframe which will be the addition of columns: heep_singles, heep_coin, MF_real, SRC_real into a single column
+# NOTE: the columns can be added safely (will not actually mix different kinematics), e.g., no change of mixing heep_coin with MF_real counts, as one of these will be NaN and the other will NOT.
+df['real_counts'] = df.fillna(0)['heep_singles\ncounts'] + df.fillna(0)['heep_coin\ncounts'] + df.fillna(0)['MF_real\ncounts'] + df.fillna(0)['SRC_real\ncounts']
+df['real_rates'] = df.fillna(0)['heep_singles\nrates [Hz]'] + df.fillna(0)['heep_coin\nrates [Hz]'] + df.fillna(0)['MF_real\nrates [Hz]'] + df.fillna(0)['SRC_real\nrates [Hz]']
+
+# calculate counts/mC
+df['counts_per_mC'] =  df['real_counts'] / charge
+
+# calculate beam efficiency
+df['beam_eff'] = df['beam_on_target\n[sec]'] /df['run_len']
+
+
+
+# re-define dataframe for special tasks
+
+# 1) filter out (use only) MF and SRC (for tracking quantities over entire run period) : heep will only be tracked in the Run Summary plot
+df_cafe = df[df["kin\nstudy"].str.contains("MF") | df["kin\nstudy"].str.contains("SRC")]
+
 
 
 cafe_dict = {
@@ -103,17 +122,9 @@ cafe_dict = {
 
 
 fig = go.Figure()
-fig = make_subplots(
-    rows=2, cols=2,
-    specs=[[{"colspan": 2}, None],
-           [{}, {}],
-    ],
-    subplot_titles=("First Subplot","Second Subplot", "Third Subplot"))
-
 for targ in cafe_dict['target_names']:
     for kin in cafe_dict['kinematic_study'][targ]:
 
-        #print('targ, kin:', targ, kin)
         # set color, pattern and line style
         bar_color   = cafe_dict['color'][targ][kin]
         bar_pattern = cafe_dict['pattern'][targ][kin]
@@ -121,31 +132,18 @@ for targ in cafe_dict['target_names']:
         
         #print(bar_color)
         
-        # selected dataframe @ selected  (targ,kin)
+        # define selected dataframe @ selected  (targ,kin)
         df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin))]
 
 
         #print(df_select.shape[0])
         if(df_select.shape[0]>0 and df_select.shape[0]<2):
-
-            #fig.add_trace(
-            #go.Scatter(y=df_select['BCM4A\ncharge\n[mC]'])
-            #)
-            
-            print('targ, kin : ', targ,',',kin)
-            print('x: ', df_select['run_center'])
-            print('y: ', df_select['BCM4A\ncharge\n[mC]'])
-
-            # add cumulative charge line
-            #fig.add_trace(
-            #    go.Scatter( x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color),line=dict(dash=line_style) )
-            #)
             
             # add bar chart
             fig.add_trace(
                 
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
-                       name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern,
+                       name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern, 
 
                        #hovertext = "%s" % df_select['run\nnumber']
                            hovertemplate="run_number    :%s<br>"
@@ -172,43 +170,37 @@ for targ in cafe_dict['target_names']:
                        )
                        
                 ), #end go.Bar
-                row=1, col=1
                 
 
             
             ) # end add_trace
 
 
-
-
         else:
-            #print(df_select.shape[0])
+
             cnt = 0 # counter
             for (index_label, row_series) in df_select.iterrows():
 
                 # need single dataframe values to be type list for plotting
-                #print('Row Index label : ', index_label)
                 x_list = []
                 y_list = []
                 w_list = []
                 x_list.append(df_select['run_center'][index_label])
                 y_list.append(df_select['BCM4A\ncharge\n[mC]'][index_label])
                 w_list.append(df_select['run_len_ms'][index_label])
-                #print('list = ',x_list)
                 
                 if cnt==0:
                     showlegend_flag = True
                 else:
                     showlegend_flag = False
 
-                # add cumulative charge line
-                fig.add_trace(
-                    go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
-                               hovertemplate = 'total_charge: %{y:.3f} [mC]<extra></extra>'
-
-                    ),
-                    row=1, col=1
-                )
+                # we dont want to keep track of accumulated charge for hydrogen elastics as these will be maybe 1-2 runs ONLY
+                if(targ!='LH2'):
+                    fig.add_trace(
+                        go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
+                                   hovertemplate = 'total_charge: %{y:.3f} [mC]<extra></extra>'
+                                   ),
+                    )
                 
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
@@ -243,7 +235,6 @@ for targ in cafe_dict['target_names']:
                            showlegend=showlegend_flag                  
                     ), #print('(targ, kin):',targ,',',kin,'-->',bar_color)
 
-                    row=1, col=1
                     
                 ) # end fig.add_trace
                 
@@ -251,9 +242,6 @@ for targ in cafe_dict['target_names']:
 
                 
 
-
-
-                
 #-------------------------------------------------------------
 #
 # Add annotation for total charge
@@ -279,37 +267,48 @@ for targ in cafe_dict['target_names']:
 #    )
 #    cnt=cnt+1
 
-#-------------------------------------------------------------
 
-
-fig.update_layout(legend_title_text = "CaFe Configuration")
+fig.update_layout(legend_title_text = "CaFe Configuration", title={'text':'CaFe Run Summary', 'x':0.5},  font=dict(size=14))
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
-#fig.update_yaxes(type="log")
-# create .html interactive plot 
-#fig.write_html("index.html")
-
-#fig.show()
+#fig.update_layout(hovermode="x unified")
 
 
 
-fig2 = make_subplots(
-    rows=2, cols=2,
-    specs=[[{}, {}],
-           [{"colspan": 2}, None]],
-    subplot_titles=("First Subplot","Second Subplot", "Third Subplot"))
+#---------------------------------------
+#
+#  Make Plots  MF, SRC related quantities with time
+#
+#---------------------------------------
 
-fig2.add_trace(go.Scatter(x=[1, 2], y=[1, 2]),
-                 row=1, col=1)
+fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy")
 
-fig2.add_trace(go.Scatter(x=[1, 2], y=[1, 2]),
-                 row=1, col=2)
-fig2.add_trace(go.Scatter(x=[1, 2, 3], y=[2, 1, 2]),
-                 row=2, col=1)
+fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
+# do not use the same y scale
+fig2.update_yaxes(matches=None)
+fig2.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig2.update_traces(mode="markers+lines", hovertemplate=None)
+fig2.update_layout(hovermode="x unified")
 
-fig2.update_layout(showlegend=False, title_text="Specs with Subplot Title")
+
+fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy")
+fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
+fig3.update_yaxes(matches=None)
+fig3.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig3.update_traces(mode="markers+lines", hovertemplate=None)
+fig3.update_layout(hovermode="x unified")
 
 
-with open('p_graph.html', 'a') as f:
+fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy")
+fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency: beam-on-target/daq_run_length")
+fig4.update_yaxes(matches=None)
+fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig4.update_traces(mode="markers+lines", hovertemplate=None)
+fig4.update_layout(hovermode="x unified")
+
+
+with open('p_graph.html', 'w') as f:
     f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
