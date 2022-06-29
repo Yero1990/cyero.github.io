@@ -56,67 +56,151 @@ df_cafe = df[df["kin\nstudy"].str.contains("MF") | df["kin\nstudy"].str.contains
 
 
 
-cafe_dict = {
-    'target_names' : {
-        'LH2',
-        'LD2',
-        'Ca48'
-    },
+cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 'C12', 'Ca40', 'Ca48', 'Ti48', 'Fe54'},
+             
+             'kinematic_study' : {
+                 'LH2' : {'heep_singles', 'heep_coin'},
+                 'LD2' : {'MF', 'SRC'},
+                 'Be9' : {'MF', 'SRC'},
+                 'B10' : {'MF', 'SRC'},
+                 'B11' : {'MF', 'SRC'},
+                 'C12_optics' : {'optics'},
+                 'C12' : {'MF', 'SRC'},
+                 'Ca40': {'MF', 'SRC'},
+                 'Ca48': {'MF', 'SRC'},
+                 'Ti48': {'MF', 'SRC'},
+                 'Fe54': {'MF', 'SRC'},    
+             },
+             
+             'color' : {
+                 
+                 # rgb(31, 119, 180) muted blue
+                 # rgb(227, 119, 194) pink
+                 # rgb(127, 127, 127) gray
+                 # rgb(188, 189, 34)  lime
+                 # rgb(23, 190, 207)  blue
+                 # rgb(255, 127, 14)  orange
+                 # rgb(44, 160, 44)   green
+                 # rgb(148, 103, 189) purple
+                 # rgb(214, 39, 40)   red
+                 'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',
+                           'heep_coin': 'rgba(227, 119, 194, 0.8)'},  
+                 
+                 'LD2' : { 'MF'       : 'rgba(148, 103, 189, 0.8)' ,   
+                           'SRC'      : 'rgba(214, 39, 40, 0.8)'},
+                 
+                 'Be9' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 'B10' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 'B11' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                
+                 'C12_optics' : { 'optics'       : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 'C12' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 
+                 'Ca40' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 
+                 'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 'Ti48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 
+                 'Fe54' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
+                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},        
+             },
+             
+             'pattern' : {
+                 'LH2' : { 'heep_singles': '',
+                           'heep_coin': ''},  
+                 
+                 'LD2' : { 'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
+                 'Be9' : { 'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
+                 'B10' : { 'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
+                 'B11' : { 'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
+                 'C12_optics' : { 'optics': '.'},
+                 
+                 'C12' : { 'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
+                 'Ca40' : { 'MF'       : '' ,  
+                            'SRC'      : '/'},
+                 
+                 'Ca48' : { 'MF'       : '' ,  
+                            'SRC'      : '/'},
+                 
+                 'Ti48' : { 'MF'       : '' ,  
+                            'SRC'      : '/'},  
+                 
+                 
+                 'Fe54' : { 'MF'       : '', 
+                            'SRC'      : '/'},  
+                 
+             },
+             
+             'linestyle' : {
+                 'LH2' : { 'heep_singles': 'solid',
+                           'heep_coin': 'dash'},  
+                 
+                 'LD2' : { 'MF'       : 'solid' ,  
+                           'SRC'      : 'dash'},  
 
-    'kinematic_study' : {
-        'LH2' : {'heep_singles', 'heep_coin'},
-        'LD2' : {'MF', 'SRC'},
-        'Ca48': {'MF', 'SRC'},
-        
-    },
+   
+                 'Be9' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-    'color' : {
+                    
+                 'B10' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-        # rgb(31, 119, 180) muted blue
-        # rgb(227, 119, 194) pink
-        # rgb(127, 127, 127) gray
-        # rgb(188, 189, 34)  lime
-        # rgb(23, 190, 207)  blue
-        # rgb(255, 127, 14)  orange
-        # rgb(44, 160, 44)   green
-        # rgb(148, 103, 189) purple
-        # rgb(214, 39, 40)   red
-        'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',
-                  'heep_coin': 'rgba(227, 119, 194, 0.8)'},  
+                    
+                 'B11' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-        'LD2' : { 'MF'       : 'rgba(148, 103, 189, 0.8)' ,   
-                  'SRC'      : 'rgba(214, 39, 40, 0.8)'},  
+                    
+                 'C12_optics' : { 'optics'       : 'solid'},
 
-        'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                   'SRC'      : 'rgba(148, 103, 189, 0.8)'},  
+                    
+                 'C12' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-    },
+                    
+                 'Ca40' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-    'pattern' : {
-        'LH2' : { 'heep_singles': '',
-                  'heep_coin': ''},  
+                    
+                 'Ca48' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-        'LD2' : { 'MF'       : '' ,  
-                  'SRC'      : '/'},  
+                    
+                 'Ca48' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-        'Ca48' : { 'MF'       : '', 
-                   'SRC'      : '\\'},  
+                    
+                 'Ti48' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
 
-    },
-
-    'linestyle' : {
-        'LH2' : { 'heep_singles': 'solid',
-                  'heep_coin': 'dash'},  
-        
-        'LD2' : { 'MF'       : 'solid' ,  
-                  'SRC'      : 'dash'},  
-        
-        'Ca48' : { 'MF'       : 'solid', 
-                   'SRC'      : 'dash'},  
-
-    },
-    
-
+                    
+                 'Fe54' : { 'MF'       : 'solid', 
+                            'SRC'      : 'dash'},
+                 
+             },
 }
 
 
@@ -125,6 +209,7 @@ fig = go.Figure()
 for targ in cafe_dict['target_names']:
     for kin in cafe_dict['kinematic_study'][targ]:
 
+        print('targ,kin ---> ', targ,',',kin)
         # set color, pattern and line style
         bar_color   = cafe_dict['color'][targ][kin]
         bar_pattern = cafe_dict['pattern'][targ][kin]
@@ -300,14 +385,14 @@ fig3.update_layout(hovermode="x unified")
 
 
 fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy")
-fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency: beam-on-target/daq_run_length")
+fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
 fig4.update_yaxes(matches=None)
 fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
 fig4.update_traces(mode="markers+lines", hovertemplate=None)
 fig4.update_layout(hovermode="x unified")
 
 
-with open('p_graph.html', 'w') as f:
+with open('index.html', 'w') as f:
     f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
