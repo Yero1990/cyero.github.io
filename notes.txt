@@ -1,0 +1,45 @@
+Plots to add:
+
+1) Counts / (mC * target_density) (luminosity), so we can compare different targets
+2) total_counts (cumulative)
+
+
+# ! # targetfac = convert mg/cm^2  to   nucleons / cm^2    luminosity (cm^2 s^-1)
+
+# 6.022 * 1e^23 atoms / mol
+# 1 g/mol = 1 amu
+# 1 barn = 10^-28 m^2 (or 100 fm^2)
+# target aeral density [g/cm^2]: rho [g/cm^3] *  target_length [cm]
+
+[g/cm^2]
+
+
+
+ex.  Be9 : 9.012182 amu  (or  9.012182 g/mol)
+from D. Meekins table:  0.978 g/cm^2,   density: 1.848 g / cm^3,  real_thickness: 5 mm (0.5 cm), req thickness: 0.5292 cm
+(real thickness is misleading, because it is not used, and one woudl think it is the one used for calculation)
+(so it seems Meekins actually uses the columns "Thick" [g/cm^2] and "Density"[g/cm^3] to calculate "Req Thickness"[cm]
+
+
+
+# In SIMC, the targetfac can be calculated by converting the aereal density [g/cm^2] to nucleons / cm ^2
+
+For Be-9, for example:
+targetfac = (Aereal_density * 1/ m_amu) * Na * #nucleons/atom
+          = 0.978 g/cm^2 *  ( 1. mol / 9.012182 g ) * 6.022 * 1e^23 atoms / mol *  (9 nucleons / 1 Be9-atom) = 5.88 * 1e23 nucleons / cm^2 
+
+
+
+luminosity = EXPER%charge/targetfac  =  (1/sig) * dN/dt,  where sig is the "cross section" and dN/dt is the event rate
+
+
+so .. . . .    sig = (dN/dt) / (charge/targetfac) --> dimensional analysis gives:
+                    (1/[sec]) / ([mC] / (#nucleons/cm^2 )) = sec^-1 cm^-2
+
+
+Continuing the example of Be-9 . . .
+targetfac = 5.88 * 1e23 nucleons / cm^2  * (1e-24 cm^2 / 1barn)  = 0.588 barns^-1
+
+
+Now, say we have found Be9 to have a (e,e'p) rate for mean-field of dN/dt = 138 Hz, and charge accumulated of 80 mC, this means that
+the rough cross section is: sig = 138 Hz / (80 mC / 0.588 barns^-1) = 1.0143 s^-1 barns^-1 per milliCoulomb

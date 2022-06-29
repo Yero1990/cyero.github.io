@@ -76,46 +76,45 @@ cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 
                  
                  # rgb(31, 119, 180) muted blue
                  # rgb(227, 119, 194) pink
-                 # rgb(127, 127, 127) gray
                  # rgb(188, 189, 34)  lime
                  # rgb(23, 190, 207)  blue
                  # rgb(255, 127, 14)  orange
                  # rgb(44, 160, 44)   green
                  # rgb(148, 103, 189) purple
                  # rgb(214, 39, 40)   red
-                 'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',
-                           'heep_coin': 'rgba(227, 119, 194, 0.8)'},  
+                 'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',   # gray
+                           'heep_coin'   : 'rgba(255, 255, 0,   0.8)'},  # yellow  
                  
-                 'LD2' : { 'MF'       : 'rgba(148, 103, 189, 0.8)' ,   
-                           'SRC'      : 'rgba(214, 39, 40, 0.8)'},
+                 'LD2' : { 'MF'       : 'rgba(0,255,255, 0.8)' ,          # cyan
+                           'SRC'      : 'rgba(0,255,255, 0.8)'},
                  
-                 'Be9' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 'Be9' : { 'MF'       : 'rgba(255,140,0, 0.8)',     # dark orange   
+                           'SRC'      : 'rgba(255,140,0, 0.8)'},
                  
-                 'B10' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 'B10' : { 'MF'       : 'rgba(255,0,255, 0.8)',     # magenta   
+                           'SRC'      : 'rgba(255,0,255, 0.8)'},
                  
-                 'B11' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 'B11' : { 'MF'       : 'rgba(148,0,211, 0.8)',   # dark violet 
+                           'SRC'      : 'rgba(148,0,211, 0.8)'},
                 
-                 'C12_optics' : { 'optics'       : 'rgba(148, 103, 189, 0.8)'},
+                 'C12_optics' : { 'optics'       : 'rgba(230,230,250, 0.8)'},  # lavender
                  
-                 'C12' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                           'SRC'      : 'rgba(148, 103, 189, 0.8)'},
-                 
-                 
-                 'Ca40' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 'C12' : { 'MF'       : 'rgba(0,191,255, 0.8)',    # deep sky blue   
+                           'SRC'      : 'rgba(0,191,255, 0.8)'},
                  
                  
-                 'Ca48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
+                 'Ca40' : { 'MF'       : 'rgba(255,0,0, 0.8)',    # red   
+                            'SRC'      : 'rgba(255,0,0, 0.8)'},
                  
-                 'Ti48' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},
                  
-                 'Fe54' : { 'MF'       : 'rgba(148, 103, 189, 0.8)',   
-                            'SRC'      : 'rgba(148, 103, 189, 0.8)'},        
+                 'Ca48' : { 'MF'       : 'rgba(0,0,255, 0.8)',    # blue   
+                            'SRC'      : 'rgba(0,0,255, 0.8)'},
+                 
+                 'Ti48' : { 'MF'       : 'rgba(210,105,30, 0.8)',  # chocolae   
+                            'SRC'      : 'rgba(210,105,30, 0.8)'},
+                 
+                 'Fe54' : { 'MF'       : 'rgba(0,255,0, 0.8)',    # green (lime)  
+                            'SRC'      : 'rgba(0,255,0, 0.8)'},        
              },
              
              'pattern' : {
@@ -366,30 +365,43 @@ fig.update_yaxes(title_text="Charge [mC]")
 #
 #---------------------------------------
 
-fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy")
+hover_template = ""
 
+fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
 fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
-# do not use the same y scale
 fig2.update_yaxes(matches=None)
+fig2.update_xaxes(matches=None)
 fig2.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig2.update_traces(mode="markers+lines", hovertemplate=None)
-fig2.update_layout(hovermode="x unified")
+fig2.update_traces(mode="markers+lines")
+#fig2.update_xaxes(tickangle=0)
+#fig2.update_layout(hovermode="x")
 
 
-fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy")
+fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
 fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
 fig3.update_yaxes(matches=None)
+fig3.update_xaxes(matches=None)
 fig3.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig3.update_traces(mode="markers+lines", hovertemplate=None)
-fig3.update_layout(hovermode="x unified")
+fig3.update_traces(mode="markers+lines")
+#fig3.update_layout(hovermode="x unified")
 
 
-fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy")
+fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
 fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
 fig4.update_yaxes(matches=None)
+fig4.update_xaxes(matches=None)
 fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig4.update_traces(mode="markers+lines", hovertemplate=None)
-fig4.update_layout(hovermode="x unified")
+fig4.update_traces(mode="markers+lines")
+#fig4.update_layout(hovermode="x unified")
+
+fig5 = px.scatter(df_cafe, x="run_center", y="T1\nscaler_rates\n[kHz]", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+fig5.add_trace(px.scatter(df_cafe, x="run_center", y="T1\nscaler_rates\n[kHz]", color="target", facet_col="kin\nstudy", hover_name="run\nnumber"))
+
+fig5.update_layout( title={'text':'Scaler pre-Trigger Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Scaler Rates [kHz]")
+fig5.update_yaxes(matches=None)
+fig5.update_xaxes(matches=None)
+fig5.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig5.update_traces(mode="markers+lines")
 
 
 with open('index.html', 'w') as f:
@@ -397,3 +409,4 @@ with open('index.html', 'w') as f:
     f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
