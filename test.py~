@@ -1,0 +1,9 @@
+val = 0.
+simc_parm_file = '../cafe_online_replay/UTILS_CAFE/inp/set_basic_simc_param.inp'
+for line in simc_parm_file:
+    if (line[0]=="#"): continue;
+    # general run information
+    if "heep_kin0_rates" in line :
+        print(line)
+        val = float((line.split("=")[1]).strip())
+return val

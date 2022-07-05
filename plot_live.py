@@ -13,9 +13,30 @@ import numpy as np
 exp_start = datetime(2018,4,3).timestamp()
 exp_end = datetime(2018,4,9).timestamp()
 
+#-------------------------------------------------------
+# Get CaFe SIMC stats goals (for plotting as reference)
+#-------------------------------------------------------
+
+def get_simc_ref(string=''):
+
+    simc_parm_file_path = '../cafe_online_replay/UTILS_CAFE/inp/set_basic_simc_param.inp'
+    simc_parm_file = open(simc_parm_file_path)
+
+    val = 0
+    
+    for line in simc_parm_file:
+        if (line[0]=="#"): continue;
+
+        if string in line:
+            val = float((line.split("=")[1]).strip())
+    return val
+
+
+        
+
+
 # convert csv to dataframe 
 df = pd.read_csv("cafe-2022_runlist.csv") 
-
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
@@ -31,15 +52,36 @@ df['run_center'] = run_center   # time corresponding to middle of run
 df['run_len'] = run_len.dt.total_seconds()   # run length in sec
 df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
+# add simc columns of 1) total counts goal, 2) luminosity goal, 3) norm-luminosity goal: grouped based on (target, kin_study), 
+
+# create new columns to hold CaFe statistigal goals determined from SIMC simulations
+#df['simc_counts_goal'] = np.nan
+#df['simc_lumi_goal'] = np.nan
+#df['simc_lumiNorm_goal'] = np.nan
+
+#df.loc[(df['target'].str.contains('LH2') & df['kin\nstudy'].str.contains('heep_coin')), 'simc_counts_goal']   = 500.
+#df.loc[(df['target'].str.contains('LH2') & df['kin\nstudy'].str.contains('heep_coin')), 'simc_lumi_goal']     = 500.
+#df.loc[(df['target'].str.contains('LH2') & df['kin\nstudy'].str.contains('heep_coin')), 'simc_lumiNorm_goal'] = 500.
+
+    
 # calculate cumulative quantities
 charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum() 
 df['cumulative_charge'] = charge_csum 
 
+luminosity_csum = df.groupby(['target', 'kin\nstudy'])['integrated\nluminosity\n[fb^-1]'].cumsum()
+df['cumulative_luminosity'] = luminosity_csum
+
+lumiNorm_csum = df.groupby(['target', 'kin\nstudy'])['lumiNorm_counts[fb]'].cumsum()
+df['cumulative_lumiNorm'] = lumiNorm_csum
 
 # create a new column in the dataframe which will be the addition of columns: heep_singles, heep_coin, MF_real, SRC_real into a single column
 # NOTE: the columns can be added safely (will not actually mix different kinematics), e.g., no change of mixing heep_coin with MF_real counts, as one of these will be NaN and the other will NOT.
 df['real_counts'] = df.fillna(0)['heep_singles\ncounts'] + df.fillna(0)['heep_coin\ncounts'] + df.fillna(0)['MF_real\ncounts'] + df.fillna(0)['SRC_real\ncounts']
 df['real_rates'] = df.fillna(0)['heep_singles\nrates [Hz]'] + df.fillna(0)['heep_coin\nrates [Hz]'] + df.fillna(0)['MF_real\nrates [Hz]'] + df.fillna(0)['SRC_real\nrates [Hz]']
+
+#calculate total counts
+counts_csum = df.groupby(['target', 'kin\nstudy'])['real_counts'].cumsum() 
+df['cumulative_counts'] = counts_csum
 
 # calculate counts/mC
 df['counts_per_mC'] =  df['real_counts'] / charge
@@ -282,7 +324,7 @@ for targ in cafe_dict['target_names']:
                 if(targ!='LH2'):
                     fig.add_trace(
                         go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
-                                   hovertemplate = 'total_charge: %{y:.3f} [mC]<extra></extra>'
+                                   hovertemplate = 'total_charge: %{y:.3f} [mC]  <extra></extra>'
                                    ),
                     )
                 
@@ -394,19 +436,126 @@ fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
 fig4.update_traces(mode="markers+lines")
 #fig4.update_layout(hovermode="x unified")
 
+'''
 fig5 = px.scatter(df_cafe, x="run_center", y="T1\nscaler_rates\n[kHz]", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
-fig5.add_trace(px.scatter(df_cafe, x="run_center", y="T1\nscaler_rates\n[kHz]", color="target", facet_col="kin\nstudy", hover_name="run\nnumber"))
+fig5.add_trace(px.scatter(df_cafe, x="run_center", y="T2\nscaler_rates\n[kHz]", color="target", facet_col="kin\nstudy", hover_name="run\nnumber"))
 
 fig5.update_layout( title={'text':'Scaler pre-Trigger Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Scaler Rates [kHz]")
 fig5.update_yaxes(matches=None)
 fig5.update_xaxes(matches=None)
 fig5.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
 fig5.update_traces(mode="markers+lines")
+'''
 
+fig6 = px.scatter(df_cafe, x="run_center", y="cumulative_luminosity", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+fig6.update_layout( title={'text':'Integrated Luminosity', 'x':0.5},  font=dict(size=14), yaxis_title="Integrated Luminosity [1/fb]")
+fig6.update_yaxes(matches=None)
+fig6.update_xaxes(matches=None)
+fig6.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig6.update_traces(mode="markers+lines")
+
+fig7 = px.scatter(df_cafe, x="run_center", y="cumulative_lumiNorm", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+fig7.update_layout( title={'text':'Luminosity-Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / Int. Luminosity [fb]")
+fig7.update_yaxes(matches=None)
+fig7.update_xaxes(matches=None)
+fig7.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig7.update_traces(mode="markers+lines")
+
+fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+fig8.add_traces(list(px.scatter(df_cafe, x="run_center", y="simc_counts_goal", color="target",facet_col="kin\nstudy" ).select_traces()))
+
+for idx, row in df_cafe['target'].iteritems():
+
+    # Set the (x,y) location of the SIMC reference lines for both MF (left subplot) and SRC (right subplot)
+    '''
+    y_simc_MF        = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('MF') & df_cafe['target'].str.contains(row))])['simc_counts_goal'].median()
+    x_min_simc_MF    = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('MF') & df_cafe['target'].str.contains(row))])['start_run'].min()
+    x_max_simc_MF    = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('MF') & df_cafe['target'].str.contains(row))])['end_run'].max()
+    x_median_simc_MF = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('MF') & df_cafe['target'].str.contains(row))])['run_center'].median()
+
+    fig8.add_shape(type="line", xref="x", yref="y",
+                   x0=x_min_simc_MF,
+                   y0=y_simc_MF,
+                   x1=x_max_simc_MF,
+                   y1=y_simc_MF,
+                   line_width=2,
+                   line_dash="dash", line_color="red", row=1,col=1)
+    ''' 
+    y_simc           = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('SRC') & df_cafe['target'].str.contains(row))])['simc_counts_goal'].median()
+    x_min_simc       = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('SRC') & df_cafe['target'].str.contains(row))])['start_run'].min()
+    x_max_simc       = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('SRC') & df_cafe['target'].str.contains(row))])['end_run'].max()
+    x_median_simc    = (df_cafe.loc[(df_cafe['kin\nstudy'].str.contains('SRC') & df_cafe['target'].str.contains(row))])['run_center'].median()
+
+    fig8.add_shape(type="line", xref="x", yref="y",
+                x0=x_min_simc,
+                y0=y_simc,
+                x1=x_max_simc,
+                y1=y_simc,
+                line_width=2,
+                line_dash="dash", line_color="red", row=1,col=2)
+
+    '''
+    # add annotation text with an arrow
+    fig8.add_annotation(
+        x=x_median_simc_MF,
+        y=y_simc_MF,
+        xref='x1',  # this represents subplot 2
+        yref='y1', 
+        text=f'%s stats goal:<br> %.1f counts '%(row.strip(), y_simc_MF),
+        yanchor='bottom',
+        showarrow=False,
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#636363",
+        ax=-20,
+        ay=-30,
+        font=dict(size=11, color="black", family="Courier New, monospace"),
+        align="left",
+        )
+    '''
+
+
+
+
+    '''
+    # add annotation text with an arrow
+    fig8.add_annotation(
+        x=x_median_simc,
+        y=y_simc,
+        xref='x2',  # this represents subplot 2
+        yref='y2', 
+        text=f'%s stats goal:<br> %.1f counts '%(row.strip(), y_simc),
+        yanchor='bottom',
+        showarrow=False,
+        arrowhead=1,
+        arrowsize=1,
+        arrowwidth=2,
+        arrowcolor="#636363",
+        ax=-20,
+        ay=-30,
+        font=dict(size=11, color="black", family="Courier New, monospace"),
+        align="left",
+        )
+    '''
+
+
+
+
+
+#fig8.add_traces(list(px.line(df_cafe, x="run_center", y="simc_counts_goal", line_dash="target",  facet_col="kin\nstudy", name="trace").select_traces()))
+fig8.update_layout( title={'text':'Total A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
+fig8.update_yaxes(matches=None)
+fig8.update_xaxes(matches=None)
+fig8.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+fig8.update_traces(mode="markers+lines")
 
 with open('index.html', 'w') as f:
     f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
     f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
+    #f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
+    f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
