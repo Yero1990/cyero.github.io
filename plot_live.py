@@ -135,8 +135,8 @@ cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 
                  'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',   # gray
                            'heep_coin'   : 'rgba(255, 255, 0,   0.8)'},  # yellow  
                  
-                 'LD2' : { 'MF'       : 'rgba(0,255,255, 0.8)' ,          # cyan
-                           'SRC'      : 'rgba(0,255,255, 0.8)'},
+                 'LD2' : { 'MF'       : 'rgba(48,128,20, 0.8)' ,          # sapgreen
+                           'SRC'      : 'rgba(48,128,20, 0.8)'},
                  
                  'Be9' : { 'MF'       : 'rgba(255,140,0, 0.8)',     # dark orange   
                            'SRC'      : 'rgba(255,140,0, 0.8)'},
