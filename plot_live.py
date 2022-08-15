@@ -35,7 +35,7 @@ def get_simc_ref(string=''):
 
 
 # convert csv to dataframe 
-df = pd.read_csv("cafe-2022_runlist.csv") 
+df = pd.read_csv("../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
@@ -53,16 +53,23 @@ df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
 # add simc columns of 1) total counts goal, 2) luminosity goal, 3) norm-luminosity goal: grouped based on (target, kin_study), 
 
-    
+
 # calculate cumulative quantities
 charge_csum = df.groupby(['target', 'kin\nstudy'])['BCM4A\ncharge\n[mC]'].cumsum() 
+
 df['cumulative_charge'] = charge_csum 
 
+print(df['cumulative_charge'])
+
+# convert dtype object to float (for some unknown reason, for this column, when np.nan is used, the dtype changes from float to object, so Im changing back)
+df['integrated\nluminosity\n[fb^-1]'] = pd.to_numeric(df['integrated\nluminosity\n[fb^-1]'], errors='coerce')
 luminosity_csum = df.groupby(['target', 'kin\nstudy'])['integrated\nluminosity\n[fb^-1]'].cumsum()
 df['cumulative_luminosity'] = luminosity_csum
 
+df['lumiNorm_counts[fb]'] = pd.to_numeric(df['lumiNorm_counts[fb]'], errors='coerce')
 lumiNorm_csum = df.groupby(['target', 'kin\nstudy'])['lumiNorm_counts[fb]'].cumsum()
 df['cumulative_lumiNorm'] = lumiNorm_csum
+
 
 # create a new column in the dataframe which will be the addition of columns: heep_singles, heep_coin, MF_real, SRC_real into a single column
 # NOTE: the columns can be added safely (will not actually mix different kinematics), e.g., no chance of mixing heep_coin with MF_real counts, etc. as one of these will be NaN and the other will NOT.
@@ -415,83 +422,92 @@ fig.update_yaxes(title_text="Charge [mC]")
 #
 #---------------------------------------
 
-hover_template = ""
+if not df_cafe.empty:
+    print('CaFe DataFrame is NOT empty!')
+    
+    hover_template = ""
 
-fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
-fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
-fig2.update_yaxes(matches=None)
-fig2.update_xaxes(matches=None)
-fig2.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig2.update_traces(mode="markers+lines")
-#fig2.update_xaxes(tickangle=0)
-#fig2.update_layout(hovermode="x")
-
-
-fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
-fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
-fig3.update_yaxes(matches=None)
-fig3.update_xaxes(matches=None)
-fig3.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig3.update_traces(mode="markers+lines")
-#fig3.update_layout(hovermode="x unified")
+    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
+    fig2.update_yaxes(matches=None)
+    fig2.update_xaxes(matches=None)
+    fig2.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig2.update_traces(mode="markers+lines")
+    #fig2.update_xaxes(tickangle=0)
+    #fig2.update_layout(hovermode="x")
 
 
-fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
-fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
-fig4.update_yaxes(matches=None)
-fig4.update_xaxes(matches=None)
-fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig4.update_traces(mode="markers+lines")
-#fig4.update_layout(hovermode="x unified")
+    fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
+    fig3.update_yaxes(matches=None)
+    fig3.update_xaxes(matches=None)
+    fig3.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig3.update_traces(mode="markers+lines")
+    #fig3.update_layout(hovermode="x unified")
+    
+    
+    fig4 = px.scatter(df_cafe, x="run_center", y="beam_eff", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
+    fig4.update_yaxes(matches=None)
+    fig4.update_xaxes(matches=None)
+    fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig4.update_traces(mode="markers+lines")
+    #fig4.update_layout(hovermode="x unified")
+    
+    
+    fig5 = px.scatter(df_cafe, x="run_center", y="cumulative_charge", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_charge [mC]':(':.2f', df_cafe['cumulative_charge']),
+                                                                                                                                                    'statistical_goal [mC]':(':.3f', df_cafe['simc_charge_goal\n[mC]']),
+                                                                                                                                                    'percentage_completed [%]':(':.2f', df_cafe['charge_perct_completed'])})
+    fig5.update_layout( title={'text':'Accumulated Charge', 'x':0.5},  font=dict(size=14), yaxis_title="BCM4A Charge [mC]")
+    fig5.update_yaxes(matches=None)
+    fig5.update_xaxes(matches=None)
+    fig5.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig5.update_traces(mode="markers+lines")
+    
+    
+    fig6 = px.scatter(df_cafe, x="run_center", y="cumulative_luminosity", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_luminosity [1/fb]':(':.3f', df_cafe['cumulative_luminosity']),
+                                                                                                                                                        'statistical_goal [1/fb]':(':.3f', df_cafe['integrated\nluminosity\n[fb^-1]']),
+                                                                                                                                                        'percentage_completed [%]':(':.2f', df_cafe['lumi_perct_completed'])})
+    fig6.update_layout( title={'text':'Integrated Luminosity', 'x':0.5},  font=dict(size=14), yaxis_title="Integrated_Luminosity [1/fb]")
+    fig6.update_yaxes(matches=None)
+    fig6.update_xaxes(matches=None)
+    fig6.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig6.update_traces(mode="markers+lines")
 
+    
+    fig7 = px.scatter(df_cafe, x="run_center", y="cumulative_lumiNorm", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts_per_luminosity [fb]':(':.3f', df_cafe['cumulative_lumiNorm']),
+                                                                                                                                                      'statistical_goal [fb]':(':.3f', df_cafe['simc_lumiNorm_counts[fb]']),
+                                                                                                                                                      'percentage_completed [%]':(':.2f', df_cafe['lumiNorm_perct_completed'])})
 
-fig5 = px.scatter(df_cafe, x="run_center", y="cumulative_charge", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_charge [mC]':(':.2f', df_cafe['cumulative_charge']),
-                                                                                                                                                'statistical_goal [mC]':(':.3f', df_cafe['simc_charge_goal\n[mC]']),
-                                                                                                                                                'percentage_completed [%]':(':.2f', df_cafe['charge_perct_completed'])})
-fig5.update_layout( title={'text':'Accumulated Charge', 'x':0.5},  font=dict(size=14), yaxis_title="BCM4A Charge [mC]")
-fig5.update_yaxes(matches=None)
-fig5.update_xaxes(matches=None)
-fig5.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig5.update_traces(mode="markers+lines")
+    fig7.update_layout( title={'text':'Luminosity-Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="(Counts / Integrated_Luminosity) [fb]")
+    fig7.update_yaxes(matches=None)
+    fig7.update_xaxes(matches=None)
+    fig7.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig7.update_traces(mode="markers+lines")
+    
 
+    fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts':':.2f',
+                                                                                                                                                    'statistical_goal':(':i', df_cafe['simc_counts_goal']),
+                                                                                                                                                    'percentage_completed [%]':(':.2f', df_cafe['counts_perct_completed'])})
+    
+    fig8.update_layout( title={'text':'Total A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
+    fig8.update_yaxes(matches=None)
+    fig8.update_xaxes(matches=None)
+    fig8.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig8.update_traces(mode="markers+lines")
 
-fig6 = px.scatter(df_cafe, x="run_center", y="cumulative_luminosity", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_luminosity [1/fb]':(':.3f', df_cafe['cumulative_luminosity']),
-                                                                                                                                                'statistical_goal [1/fb]':(':.3f', df_cafe['integrated\nluminosity\n[fb^-1]']),
-                                                                                                                                                'percentage_completed [%]':(':.2f', df_cafe['lumi_perct_completed'])})
-fig6.update_layout( title={'text':'Integrated Luminosity', 'x':0.5},  font=dict(size=14), yaxis_title="Integrated_Luminosity [1/fb]")
-fig6.update_yaxes(matches=None)
-fig6.update_xaxes(matches=None)
-fig6.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig6.update_traces(mode="markers+lines")
-
-
-fig7 = px.scatter(df_cafe, x="run_center", y="cumulative_lumiNorm", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts_per_luminosity [fb]':(':.3f', df_cafe['cumulative_lumiNorm']),
-                                                                                                                                                'statistical_goal [fb]':(':.3f', df_cafe['simc_lumiNorm_counts[fb]']),
-                                                                                                                                                'percentage_completed [%]':(':.2f', df_cafe['lumiNorm_perct_completed'])})
-
-fig7.update_layout( title={'text':'Luminosity-Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="(Counts / Integrated_Luminosity) [fb]")
-fig7.update_yaxes(matches=None)
-fig7.update_xaxes(matches=None)
-fig7.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig7.update_traces(mode="markers+lines")
-
-
-fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts':':.2f',
-                                                                                                                                                'statistical_goal':(':i', df_cafe['simc_counts_goal']),
-                                                                                                                                                'percentage_completed [%]':(':.2f', df_cafe['counts_perct_completed'])})
-
-fig8.update_layout( title={'text':'Total A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
-fig8.update_yaxes(matches=None)
-fig8.update_xaxes(matches=None)
-fig8.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-fig8.update_traces(mode="markers+lines")
 
 with open('index.html', 'w') as f:
     f.write(fig.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
-    f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
+
+    if not df_cafe.empty:
+        f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
+
+
+
