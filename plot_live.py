@@ -336,12 +336,15 @@ for targ in cafe_dict['target_names']:
                     showlegend_flag = False
 
                 # we dont want to keep track of accumulated charge for hydrogen elastics as these will be maybe 1-2 runs ONLY
-                if(targ!='LH2'):
-                    fig.add_trace(
-                        go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
-                                   hovertemplate = 'total_charge: %{y:.3f} [mC]  <extra></extra>'
-                                   ),
-                    )
+                print('kin -->', kin)
+                if kin!='heep_singles':
+                    if kin!='optics':
+                        fig.add_trace(
+                            go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
+                                       hovertemplate = 'total_charge: %{y:.3f} [mC]  <extra></extra>'
+                            ),
+                        )
+
                 
                 fig.add_trace(
                     go.Bar(x=x_list, y=y_list, width=w_list,
@@ -351,13 +354,23 @@ for targ in cafe_dict['target_names']:
                            #hovertext = "%s" % df_select['run\nnumber'][index_label],
                            hovertemplate="run_number    :%s<br>"
                                          "target        :%s<br>"
-                                         "kin_study     :%s<br>"
+                                         "kin_study     :%s<br>"                           
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
+                                         "Beam E [ GeV ]  : %.4f <br>"
+                                         "SHMS P [GeV/c]  : %.3f <br>"
+                                         "SHMS Angle [deg]: %.3f <br>"
                                          "run_length [sec] :%s<br>"
                                          "beam_time  [sec] :%s<br>"                                       
                                          "beam_current [uA] :%s<br>"
                                          "beam_charge  [mC] :%s<br>"
+                                         "T2 pre-scale factor: %i <br>"
+                                         "T2 total_LT:  %.3f  <br>"
+                                         "T2 scalers:   %.1f kHz    <br>"
+                                         "T2 accp (pre-scaled): %.1f kHz    <br>"
+                                         "SHMS (e-) trk eff: %.3f <br>"
+                                         "heep_singles: %.2f [%.2f kHz] <br>"
+                                         ""
                                          "<extra></extra>" %
                            (
                                df_select['run\nnumber'][index_label],
@@ -365,12 +378,20 @@ for targ in cafe_dict['target_names']:
                                df_select['kin\nstudy'][index_label],
                                df_select['start_run'][index_label],
                                df_select['end_run'][index_label],
+                               df_select['beam\nenergy\n[GeV]'][index_label],
+                               df_select['SHMS_P\n[GeV/c]'][index_label],
+                               df_select['SHMS_Angle\n[deg]'][index_label],
                                df_select['run_len'][index_label],
                                df_select['beam_on_target\n[sec]'][index_label],                
                                df_select['BCM4A\ncurrent\n[uA]'][index_label],
                                df_select['BCM4A\ncharge\n[mC]'][index_label],
-
-
+                               df_select['PS2'][index_label],
+                               df_select['T2_tLT'][index_label],
+                               df_select['T2\nscaler_rates\n[kHz]'][index_label],
+                               df_select['T2\naccp_rates\n[kHz]'][index_label],
+                               df_select['SHMS\nTrkEff'][index_label],
+                               df_select['heep_singles\ncounts'][index_label],
+                               df_select['heep_singles\nrates [Hz]'][index_label]/1000.,
                            ),
 
                            showlegend=showlegend_flag                  
@@ -409,7 +430,7 @@ for targ in cafe_dict['target_names']:
 #    cnt=cnt+1
 
 
-fig.update_layout(legend_title_text = "CaFe Configuration", title={'text':'CaFe Run Summary', 'x':0.5},  font=dict(size=14))
+fig.update_layout(legend_title_text = "CaFe Configuration", title={'text':'CaFe Run Summary (Aug 08,2022)', 'x':0.5},  font=dict(size=14))
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
 #fig.update_layout(hovermode="x unified")
