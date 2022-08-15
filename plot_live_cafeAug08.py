@@ -352,11 +352,12 @@ for targ in cafe_dict['target_names']:
 
 
                            #hovertext = "%s" % df_select['run\nnumber'][index_label],
-                           hovertemplate="run_number    :%s<br>"
-                                         "target        :%s<br>"
-                                         "kin_study     :%s<br>"                           
+                           hovertemplate="run_number    :%s<br>"                                                             
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
+                                         "evts_replayed :%s<br>"
+                                         "target        :%s<br>"
+                                         "kin_study     :%s<br>"      
                                          "Beam E [ GeV ]  : %.4f <br>"
                                          "SHMS P [GeV/c]  : %.3f <br>"
                                          "SHMS Angle [deg]: %.3f <br>"
@@ -373,11 +374,12 @@ for targ in cafe_dict['target_names']:
                                          ""
                                          "<extra></extra>" %
                            (
-                               df_select['run\nnumber'][index_label],
-                               df_select['target'][index_label],
-                               df_select['kin\nstudy'][index_label],
+                               df_select['run\nnumber'][index_label],                        
                                df_select['start_run'][index_label],
                                df_select['end_run'][index_label],
+                               df_select['evts\nreplayed'][index_label],
+                               df_select['target'][index_label],
+                               df_select['kin\nstudy'][index_label],
                                df_select['beam\nenergy\n[GeV]'][index_label],
                                df_select['SHMS_P\n[GeV/c]'][index_label],
                                df_select['SHMS_Angle\n[deg]'][index_label],
