@@ -453,6 +453,7 @@ for targ in cafe_dict['target_names']:
 fig.update_layout(legend_title_text = "CaFe Configuration", title={'text':'CaFe Run Summary (September 2022)', 'x':0.5},  font=dict(size=14))
 fig.update_xaxes(title_text="Date")
 fig.update_yaxes(title_text="Charge [mC]")
+
 #fig.update_layout(hovermode="x unified")
 
 
