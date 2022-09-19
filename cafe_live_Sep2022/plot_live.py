@@ -298,29 +298,68 @@ for targ in cafe_dict['target_names']:
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
                        name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern, 
 
-                       #hovertext = "%s" % df_select['run\nnumber']
+                           #hovertext = "%s" % df_select['run\nnumber'][index_label],
                            hovertemplate="run_number    :%s<br>"
                                          "target        :%s<br>"
-                                         "kin_study     :%s<br>"
+                                         "kin_study     :%s<br>"                           
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
+                                         "Beam E [ GeV ]  : %.4f <br>"
+                                         "SHMS P [GeV/c]  : %.3f <br>"
+                                         "SHMS Angle [deg]: %.3f <br>"
+                                         "HMS P [GeV/c]  : %.3f <br>"
+                                         "HMS Angle [deg]: %.3f <br>"
                                          "run_length [sec] :%s<br>"
-                                         "beam_time  [sec] :%s<br>"
+                                         "beam_time  [sec] :%s<br>"                                       
                                          "beam_current [uA] :%s<br>"
                                          "beam_charge  [mC] :%s<br>"
+                                         "T1 pre-scale factor: %i <br>"
+                                         "T1 scalers:  %.1f kHz    <br>"
+                                         "T1 accepted: %.1f kHz    <br>"
+                                         "T2 pre-scale factor: %i <br>"
+                                         "T2 scalers:  %.1f kHz    <br>"
+                                         "T2 accepted: %.1f kHz    <br>"
+                                         "T3 pre-scale factor: %i <br>"
+                                         "T3 scalers:  %.1f kHz    <br>"
+                                         "T3 accepted: %.1f kHz    <br>"
+                                         "T5 pre-scale factor: %i <br>"
+                                         "T5 scalers:  %.1f kHz    <br>"
+                                         "T5 accepted: %.1f kHz    <br>"
+                                         "T5_tLT:      %.1f:      <br>"
+                                         "HMS (e-) trk eff: %.3f <br>"
+                                         "SHMS (e-) trk eff: %.3f <br>"
                                          "<extra></extra>" %
-                       (
-                           df_select['run\nnumber'].to_string(index=False),
-                           df_select['target'].to_string(index=False),
-                           df_select['kin\nstudy'].to_string(index=False),
-                           df_select['start_run'].to_string(index=False),
-                           df_select['end_run'].to_string(index=False),
-                           df_select['run_len'].to_string(index=False),
-                           df_select['beam_on_target\n[sec]'].to_string(index=False),                          
-                           df_select['BCM4A\ncurrent\n[uA]'].to_string(index=False),
-                           df_select['BCM4A\ncharge\n[mC]'].to_string(index=False),
-                           
-                       )
+                           (
+                               df_select['run\nnumber'],
+                               df_select['target'],
+                               df_select['kin\nstudy'],
+                               df_select['start_run'],
+                               df_select['end_run'],
+                               df_select['beam\nenergy\n[GeV]'],
+                               df_select['SHMS_P\n[GeV/c]'],
+                               df_select['SHMS_Angle\n[deg]'],
+                               df_select['HMS_P\n[GeV/c]'],
+                               df_select['HMS_Angle\n[deg]'],
+                               df_select['run_len'],
+                               df_select['beam_on_target\n[sec]'],                
+                               df_select['BCM4A\ncurrent\n[uA]'],
+                               df_select['BCM4A\ncharge\n[mC]'],
+                               df_select['PS1'],
+                               df_select['T1\nscaler_rates\n[kHz]'],
+                               df_select['T1\naccp_rates\n[kHz]'],
+                               df_select['PS2'],
+                               df_select['T2\nscaler_rates\n[kHz]'],
+                               df_select['T2\naccp_rates\n[kHz]'],
+                               df_select['PS3'],
+                               df_select['T3\nscaler_rates\n[kHz]'],
+                               df_select['T3\naccp_rates\n[kHz]'],                               
+                               df_select['PS5'],
+                               df_select['T5\nscaler_rates\n[kHz]'],
+                               df_select['T5\naccp_rates\n[kHz]'],
+                               df_select['T5_tLT'],
+                               df_select['HMS\nTrkEff'],
+                               df_select['SHMS\nTrkEff'],
+                           )
                        
                 ), #end go.Bar
                 
@@ -486,7 +525,9 @@ if not df_cafe.empty:
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
     fig2.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig2.update_traces(mode="markers+lines")
+    fig2.update_traces( marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines" )
     #fig2.update_xaxes(tickangle=0)
     #fig2.update_layout(hovermode="x")
 
@@ -496,7 +537,9 @@ if not df_cafe.empty:
     fig3.update_yaxes(matches=None)
     fig3.update_xaxes(matches=None)
     fig3.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig3.update_traces(mode="markers+lines")
+    fig3.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
     #fig3.update_layout(hovermode="x unified")
     
     
@@ -505,7 +548,9 @@ if not df_cafe.empty:
     fig4.update_yaxes(matches=None)
     fig4.update_xaxes(matches=None)
     fig4.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig4.update_traces(mode="markers+lines")
+    fig4.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
     #fig4.update_layout(hovermode="x unified")
     
     
@@ -516,7 +561,9 @@ if not df_cafe.empty:
     fig5.update_yaxes(matches=None)
     fig5.update_xaxes(matches=None)
     fig5.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig5.update_traces(mode="markers+lines")
+    fig5.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
     
     
     fig6 = px.scatter(df_cafe, x="run_center", y="cumulative_luminosity", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_luminosity [1/fb]':(':.3f', df_cafe['cumulative_luminosity']),
@@ -526,7 +573,9 @@ if not df_cafe.empty:
     fig6.update_yaxes(matches=None)
     fig6.update_xaxes(matches=None)
     fig6.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig6.update_traces(mode="markers+lines")
+    fig6.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
 
     
     fig7 = px.scatter(df_cafe, x="run_center", y="cumulative_lumiNorm", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts_per_luminosity [fb]':(':.3f', df_cafe['cumulative_lumiNorm']),
@@ -537,7 +586,9 @@ if not df_cafe.empty:
     fig7.update_yaxes(matches=None)
     fig7.update_xaxes(matches=None)
     fig7.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig7.update_traces(mode="markers+lines")
+    fig7.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
     
 
     fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts':':.2f',
@@ -548,7 +599,9 @@ if not df_cafe.empty:
     fig8.update_yaxes(matches=None)
     fig8.update_xaxes(matches=None)
     fig8.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
-    fig8.update_traces(mode="markers+lines")
+    fig8.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
 
 
 with open('index.html', 'w') as f:
