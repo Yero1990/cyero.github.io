@@ -35,7 +35,8 @@ def get_simc_ref(string=''):
 
 
 # convert csv to dataframe 
-df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
+#df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
+df = pd.read_csv("./cafe-2022_runlist.csv") 
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
@@ -113,9 +114,10 @@ df_cafe = df[df["kin\nstudy"].str.contains("MF") | df["kin\nstudy"].str.contains
 
 
 
-cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 'C12', 'Ca40', 'Ca48', 'Ti48', 'Fe54'},
+cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 'C12', 'Ca40', 'Ca48', 'Ti48', 'Fe54'},
              
              'kinematic_study' : {
+                 'dummy': {'MF', 'SRC'},
                  'LH2' : {'heep_singles', 'heep_coin'},
                  'LD2' : {'MF', 'SRC'},
                  'Be9' : {'MF', 'SRC'},
@@ -139,8 +141,12 @@ cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 
                  # rgb(44, 160, 44)   green
                  # rgb(148, 103, 189) purple
                  # rgb(214, 39, 40)   red
+                 
+                 'dummy' : {'MF'      : 'rgba(255,248,220, 0.8)' ,          # cornsilk
+                           'SRC'      : 'rgba(255,248,220, 0.8)'},
+
                  'LH2' : { 'heep_singles': 'rgba(127, 127, 127, 0.8)',   # gray
-                           'heep_coin'   : 'rgba(255, 255, 0,   0.8)'},  # yellow  
+                           'heep_coin'   : 'rgba(155, 135, 12,   0.8)'},  # yellow  
                  
                  'LD2' : { 'MF'       : 'rgba(48,128,20, 0.8)' ,          # sapgreen
                            'SRC'      : 'rgba(48,128,20, 0.8)'},
@@ -175,6 +181,9 @@ cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 
              },
              
              'pattern' : {
+                 'dummy' : {'MF'       : '' ,  
+                           'SRC'      : '/'},
+                 
                  'LH2' : { 'heep_singles': '',
                            'heep_coin': ''},  
                  
@@ -211,6 +220,9 @@ cafe_dict = {'target_names' : {'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 
              },
              
              'linestyle' : {
+                 'dummy' : { 'MF'       : 'solid' ,  
+                            'SRC'      : 'dash'},
+                 
                  'LH2' : { 'heep_singles': 'solid',
                            'heep_coin': 'dash'},  
                  
