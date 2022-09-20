@@ -298,68 +298,29 @@ for targ in cafe_dict['target_names']:
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
                        name="%s, %s" % (targ, kin), marker = {'color' : bar_color}, marker_pattern_shape=bar_pattern, 
 
-                           #hovertext = "%s" % df_select['run\nnumber'][index_label],
+              #hovertext = "%s" % df_select['run\nnumber']
                            hovertemplate="run_number    :%s<br>"
                                          "target        :%s<br>"
-                                         "kin_study     :%s<br>"                           
+                                         "kin_study     :%s<br>"
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
-                                         "Beam E [ GeV ]  : %.4f <br>"
-                                         "SHMS P [GeV/c]  : %.3f <br>"
-                                         "SHMS Angle [deg]: %.3f <br>"
-                                         "HMS P [GeV/c]  : %.3f <br>"
-                                         "HMS Angle [deg]: %.3f <br>"
                                          "run_length [sec] :%s<br>"
-                                         "beam_time  [sec] :%s<br>"                                       
+                                         "beam_time  [sec] :%s<br>"
                                          "beam_current [uA] :%s<br>"
                                          "beam_charge  [mC] :%s<br>"
-                                         "T1 pre-scale factor: %i <br>"
-                                         "T1 scalers:  %.1f kHz    <br>"
-                                         "T1 accepted: %.1f kHz    <br>"
-                                         "T2 pre-scale factor: %i <br>"
-                                         "T2 scalers:  %.1f kHz    <br>"
-                                         "T2 accepted: %.1f kHz    <br>"
-                                         "T3 pre-scale factor: %i <br>"
-                                         "T3 scalers:  %.1f kHz    <br>"
-                                         "T3 accepted: %.1f kHz    <br>"
-                                         "T5 pre-scale factor: %i <br>"
-                                         "T5 scalers:  %.1f kHz    <br>"
-                                         "T5 accepted: %.1f kHz    <br>"
-                                         "T5_tLT:      %.1f:      <br>"
-                                         "HMS (e-) trk eff: %.3f <br>"
-                                         "SHMS (e-) trk eff: %.3f <br>"
                                          "<extra></extra>" %
-                           (
-                               df_select['run\nnumber'],
-                               df_select['target'],
-                               df_select['kin\nstudy'],
-                               df_select['start_run'],
-                               df_select['end_run'],
-                               df_select['beam\nenergy\n[GeV]'],
-                               df_select['SHMS_P\n[GeV/c]'],
-                               df_select['SHMS_Angle\n[deg]'],
-                               df_select['HMS_P\n[GeV/c]'],
-                               df_select['HMS_Angle\n[deg]'],
-                               df_select['run_len'],
-                               df_select['beam_on_target\n[sec]'],                
-                               df_select['BCM4A\ncurrent\n[uA]'],
-                               df_select['BCM4A\ncharge\n[mC]'],
-                               df_select['PS1'],
-                               df_select['T1\nscaler_rates\n[kHz]'],
-                               df_select['T1\naccp_rates\n[kHz]'],
-                               df_select['PS2'],
-                               df_select['T2\nscaler_rates\n[kHz]'],
-                               df_select['T2\naccp_rates\n[kHz]'],
-                               df_select['PS3'],
-                               df_select['T3\nscaler_rates\n[kHz]'],
-                               df_select['T3\naccp_rates\n[kHz]'],                               
-                               df_select['PS5'],
-                               df_select['T5\nscaler_rates\n[kHz]'],
-                               df_select['T5\naccp_rates\n[kHz]'],
-                               df_select['T5_tLT'],
-                               df_select['HMS\nTrkEff'],
-                               df_select['SHMS\nTrkEff'],
-                           )
+                       (
+                           df_select['run\nnumber'].to_string(index=False),
+                           df_select['target'].to_string(index=False),
+                           df_select['kin\nstudy'].to_string(index=False),
+                           df_select['start_run'].to_string(index=False),
+                           df_select['end_run'].to_string(index=False),
+                           df_select['run_len'].to_string(index=False),
+                           df_select['beam_on_target\n[sec]'].to_string(index=False),                          
+                           df_select['BCM4A\ncurrent\n[uA]'].to_string(index=False),
+                           df_select['BCM4A\ncharge\n[mC]'].to_string(index=False),
+                           
+                       )
                        
                 ), #end go.Bar
                 
@@ -429,7 +390,7 @@ for targ in cafe_dict['target_names']:
                                          "T5 pre-scale factor: %i <br>"
                                          "T5 scalers:  %.1f kHz    <br>"
                                          "T5 accepted: %.1f kHz    <br>"
-                                         "T5_tLT:      %.1f:      <br>"
+                                         "T5_tLT:      %.3f:      <br>"
                                          "HMS (e-) trk eff: %.3f <br>"
                                          "SHMS (e-) trk eff: %.3f <br>"
                                          "<extra></extra>" %
@@ -610,10 +571,10 @@ with open('index.html', 'w') as f:
     if not df_cafe.empty:
         f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
+        #f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
+        #f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
+        #f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
+        #f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
 
 
