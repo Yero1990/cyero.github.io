@@ -83,7 +83,7 @@ df['cumulative_counts'] = counts_csum
 
 
 # ---- calculate percent completion of data-----
-
+ 
 # calculate percent of charge completed
 df['charge_perct_completed'] = df['cumulative_charge'] / df['simc_charge_goal\n[mC]'] * 100.
 
@@ -493,7 +493,8 @@ if not df_cafe.empty:
     #fig2.update_layout(hovermode="x")
 
 
-    fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig3 = px.scatter(df_cafe, x="run_center", y="real_rates", color="target", facet_col="kin\nstudy", hover_name="run\nnumber",  hover_data={       'real_rates':':%.2f',
+                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_cafe['BCM4A\ncurrent\n[uA]'])})
     fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
     fig3.update_yaxes(matches=None)
     fig3.update_xaxes(matches=None)
@@ -552,9 +553,12 @@ if not df_cafe.empty:
                                         color='DarkSlateGrey')), mode="markers+lines")
     
 
-    fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={'cumulative_counts':':.2f',
+    fig8 = px.scatter(df_cafe, x="run_center", y="cumulative_counts", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", hover_data={ 'cumulative_counts':':.2f',
+                                                                                                                                                    'counts (this run)':(':i', df_cafe['real_counts']),
+                                                                                                                                                     'count rate [Hz] (this run)':(':%.2f', df_cafe['real_rates']),
+                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_cafe['BCM4A\ncurrent\n[uA]']),
                                                                                                                                                     'statistical_goal':(':i', df_cafe['simc_counts_goal']),
-                                                                                                                                                    'percentage_completed [%]':(':.2f', df_cafe['counts_perct_completed'])})
+                                                                                                                                                     'percentage_completed [%]':(':.2f', df_cafe['counts_perct_completed'])})
     
     fig8.update_layout( title={'text':'Total A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
     fig8.update_yaxes(matches=None)
