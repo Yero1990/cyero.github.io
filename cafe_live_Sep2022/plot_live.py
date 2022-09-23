@@ -101,6 +101,8 @@ df['counts_perct_completed'] = df['cumulative_counts'] / df['simc_counts_goal'] 
 
 # calculate counts/mC
 df['counts_per_mC'] =  df['real_counts'] / charge
+df['counts_per_mC_err'] =  df['real_counts'] / (np.sqrt( df['real_counts'] ) * charge )
+print('count_per_mC_err = ', df['counts_per_mC_err'])
 
 # calculate beam efficiency
 df['beam_eff'] = df['beam_on_target\n[sec]'] /df['run_len']
@@ -481,7 +483,7 @@ if not df_cafe.empty:
     
     hover_template = ""
 
-    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
