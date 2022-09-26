@@ -290,6 +290,9 @@ for targ in cafe_dict['target_names']:
         # define selected dataframe @ selected  (targ,kin)
         df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin))]
 
+        mycustomdata = np.stack((df_select['cumulative_counts'], df_select['counts_perct_completed'], df_select['charge_perct_completed'],  df_select['target'],
+                           df_select['kin\nstudy']), axis=-1)
+
 
         #print(df_select.shape[0])
         if(df_select.shape[0]>0 and df_select.shape[0]<2):
@@ -354,8 +357,13 @@ for targ in cafe_dict['target_names']:
                 if kin!='heep_singles':
                     if kin!='optics':
                         fig.add_trace(
-                            go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
-                                       hovertemplate = 'total_charge: %{y:.3f} [mC]  <extra></extra>'
+                            go.Scatter(x=df_select['run_center'], y=df_select['cumulative_charge'], mode='markers+lines', customdata = mycustomdata, marker=dict(color=bar_color), line=dict(dash=line_style), showlegend=False,
+                                       hovertemplate = '<br>%{customdata[3]:%s}, %{customdata[4]:%s}'+
+                                                       '<br>total_charge: %{y:.3f} [mC]' +
+                                                       '<br>charge_percent_completed: %{customdata[2]:.3f}'+
+                                                       '<br>total_counts: %{customdata[0]:.1f}'+
+                                                       '<br>counts_percent_completed: %{customdata[1]:.3f}'
+                                       '<extra></extra>',
                             ),
                         )
 
@@ -371,30 +379,10 @@ for targ in cafe_dict['target_names']:
                                          "kin_study     :%s<br>"                           
                                          "start_of_run  :%s<br>"
                                          "end_of_run    :%s<br>"
-                                         "Beam E [ GeV ]  : %.4f <br>"
-                                         "SHMS P [GeV/c]  : %.3f <br>"
-                                         "SHMS Angle [deg]: %.3f <br>"
-                                         "HMS P [GeV/c]  : %.3f <br>"
-                                         "HMS Angle [deg]: %.3f <br>"
                                          "run_length [sec] :%s<br>"
                                          "beam_time  [sec] :%s<br>"                                       
                                          "beam_current [uA] :%s<br>"
                                          "beam_charge  [mC] :%s<br>"
-                                         "T1 pre-scale factor: %i <br>"
-                                         "T1 scalers:  %.1f kHz    <br>"
-                                         "T1 accepted: %.1f kHz    <br>"
-                                         "T2 pre-scale factor: %i <br>"
-                                         "T2 scalers:  %.1f kHz    <br>"
-                                         "T2 accepted: %.1f kHz    <br>"
-                                         "T3 pre-scale factor: %i <br>"
-                                         "T3 scalers:  %.1f kHz    <br>"
-                                         "T3 accepted: %.1f kHz    <br>"
-                                         "T5 pre-scale factor: %i <br>"
-                                         "T5 scalers:  %.1f kHz    <br>"
-                                         "T5 accepted: %.1f kHz    <br>"
-                                         "T5_tLT:      %.3f:      <br>"
-                                         "HMS (e-) trk eff: %.3f <br>"
-                                         "SHMS (e-) trk eff: %.3f <br>"
                                          "<extra></extra>" %
                            (
                                df_select['run\nnumber'][index_label],
@@ -402,30 +390,10 @@ for targ in cafe_dict['target_names']:
                                df_select['kin\nstudy'][index_label],
                                df_select['start_run'][index_label],
                                df_select['end_run'][index_label],
-                               df_select['beam\nenergy\n[GeV]'][index_label],
-                               df_select['SHMS_P\n[GeV/c]'][index_label],
-                               df_select['SHMS_Angle\n[deg]'][index_label],
-                               df_select['HMS_P\n[GeV/c]'][index_label],
-                               df_select['HMS_Angle\n[deg]'][index_label],
                                df_select['run_len'][index_label],
                                df_select['beam_on_target\n[sec]'][index_label],                
                                df_select['BCM4A\ncurrent\n[uA]'][index_label],
                                df_select['BCM4A\ncharge\n[mC]'][index_label],
-                               df_select['PS1'][index_label],
-                               df_select['T1\nscaler_rates\n[kHz]'][index_label],
-                               df_select['T1\naccp_rates\n[kHz]'][index_label],
-                               df_select['PS2'][index_label],
-                               df_select['T2\nscaler_rates\n[kHz]'][index_label],
-                               df_select['T2\naccp_rates\n[kHz]'][index_label],
-                               df_select['PS3'][index_label],
-                               df_select['T3\nscaler_rates\n[kHz]'][index_label],
-                               df_select['T3\naccp_rates\n[kHz]'][index_label],                               
-                               df_select['PS5'][index_label],
-                               df_select['T5\nscaler_rates\n[kHz]'][index_label],
-                               df_select['T5\naccp_rates\n[kHz]'][index_label],
-                               df_select['T5_tLT'][index_label],
-                               df_select['HMS\nTrkEff'][index_label],
-                               df_select['SHMS\nTrkEff'][index_label],
                            ),
 
                            showlegend=showlegend_flag                  
@@ -483,7 +451,7 @@ if not df_cafe.empty:
     
     hover_template = ""
 
-    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
+    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", trendline="ols")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
