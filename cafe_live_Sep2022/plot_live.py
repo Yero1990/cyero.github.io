@@ -451,7 +451,7 @@ if not df_cafe.empty:
     
     hover_template = ""
 
-    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="target", facet_col="kin\nstudy", hover_name="run\nnumber", trendline="ols")
+    fig2 = px.scatter(df_cafe, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="target", facet_col="kin\nstudy", hover_name="run\nnumber")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
