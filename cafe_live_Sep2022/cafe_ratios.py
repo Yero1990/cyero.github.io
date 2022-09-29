@@ -113,7 +113,8 @@ Ca48_SRC = 9926. / 2550.619
 Fe54_SRC = 3234.2 / 1630.213  #97.68 % composition of Fe54
 C12_SRC = 5060.6 / 1174.824
 Be9_SRC = 1860. / 328.183
-B10_SRC = 1948.8 / 457.078
+B4C_10_SRC = 1948.8 / 457.078
+B4C_11_SRC = 1742.6 / 390.079
 
 
 # SRC total counts / mC uncertainty
@@ -122,7 +123,18 @@ Ca48_SRC_err = np.sqrt(9926.) / 2550.619
 Fe54_SRC_err = np.sqrt(3234.2) / 1630.213  #97.68 % composition of Fe54
 C12_SRC_err  = np.sqrt(5060.6) / 1174.824
 Be9_SRC_err = np.sqrt(1860.) / 328.183
-B10_SRC_err = np.sqrt(1948.8) / 457.078
+B4C_10_SRC_err = np.sqrt(1948.8) / 457.078
+B4C_11_SRC_err = np.sqrt(1742.6) / 390.079
+
+# src b4c subtraction
+B10_SRC = B4C_10_SRC  - (C12_SRC * targetfac_B4C10_to_C12)
+B11_SRC = B4C_11_SRC  - (C12_SRC * targetfac_B4C11_to_C12)
+
+# src b4c subtraction uncertainty
+B10_SRC_err = np.sqrt( B4C_10_SRC_err**2  + (C12_SRC_err**2 * targetfac_B4C10_to_C12) )
+B11_SRC_err = np.sqrt( B4C_11_SRC_err**2  + (C12_SRC_err**2 * targetfac_B4C11_to_C12) )
+
+
 
 # Calculate double ratioa:  ( A_SRC / A_MF ) / ( C_SRC / C_MF ) | T, areal density and T should cancel out
 #double_R_Ca40 = (Ca40_SRC / Ca40_MF) / (C12_SRC / C12_MF)
@@ -164,6 +176,24 @@ elif(target=="B10"):
     b = B10_MF
     a_err =  B10_SRC_err
     b_err =  B10_MF_err    
+
+elif(target=="B11"):
+    a = B11_SRC
+    b = B11_MF
+    a_err =  B11_SRC_err
+    b_err =  B11_MF_err
+
+elif(target=="B4C_10"):
+    a = B4C_10_SRC
+    b = B4C_10_MF
+    a_err =  B4C_10_SRC_err
+    b_err =  B4C_10_MF_err    
+
+elif(target=="B4C_11"):
+    a = B4C_11_SRC
+    b = B4C_11_MF
+    a_err =  B4C_11_SRC_err
+    b_err =  B4C_11_MF_err
     
 # denominator of super ratio (will be C12)
 c = C12_SRC
