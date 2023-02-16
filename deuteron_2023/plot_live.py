@@ -36,7 +36,7 @@ def get_simc_ref(string=''):
 
 # convert csv to dataframe 
 #df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
-df = pd.read_csv("./deut-2022_runlist.csv") 
+df = pd.read_csv("./deut-2023_runlist.csv") 
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
@@ -56,14 +56,14 @@ df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
 
 # calculate cumulative quantities
-charge_csum = df.groupby(['target', 'kin\nstudy', 'pm_set'])['BCM4A\ncharge\n[mC]'].cumsum() 
+charge_csum = df.groupby(['target', 'kin\nstudy', 'setting'])['BCM4A\ncharge\n[mC]'].cumsum() 
 
 df['cumulative_charge'] = charge_csum 
 
 print(df['cumulative_charge'])
 
 #calculate total counts cumulative 
-counts_csum = df.groupby(['target', 'kin\nstudy', 'pm_set'])['real_counts'].cumsum() 
+counts_csum = df.groupby(['target', 'kin\nstudy', 'setting'])['real_counts'].cumsum() 
 df['cumulative_counts'] = counts_csum
 
 
@@ -86,8 +86,6 @@ print('count_per_mC_err = ', df['counts_per_mC_err'])
 # calculate beam efficiency
 df['beam_eff'] = df['beam_on_target\n[sec]'] /df['run_len']
 
-df["pm_set"] = df["pm_set"].astype(str)
-
 
 # re-define dataframe for special tasks
 
@@ -105,9 +103,9 @@ target_dict = {'target_names' : {'dummy', 'LH2', 'LD2'},
                    
                },
                
-               'pm_set' : {
-                   'dummy' : {'0'},
-                   'LH2' : {'0'},
+               'setting' : {
+                   'dummy' : {'NA'},
+                   'LH2' : {'delta_scan_-8','delta_scan_-4', 'delta_scan_0', 'delta_scan_+4', 'delta_scan_+8', 'delta_scan_+12'},
                    'LD2' : {'120', '580', '800', '900'} 
                },
              
@@ -126,15 +124,15 @@ target_dict = {'target_names' : {'dummy', 'LH2', 'LD2'},
 
                      'heep_singles'      : {
                          
-                         '0' : 'rgba(255,248,220, 0.8)' ,          # cornsilk
+                         'NA' : 'rgba(255,248,220, 0.8)' ,          # cornsilk
                      },
 
                      'heep_coin'          : {
-                         '0' : 'rgba(255,248,220, 0.8)' ,
+                         'NA' : 'rgba(255,248,220, 0.8)' ,
                      },
                      
                     'deep'              : {
-                        '0' : 'rgba(255,248,220, 0.8)',
+                        'NA' : 'rgba(255,248,220, 0.8)',
                     },
                  },
 
@@ -142,13 +140,17 @@ target_dict = {'target_names' : {'dummy', 'LH2', 'LD2'},
 
                      'heep_singles'    : {
 
-                     '0' : 'rgba(127, 127, 127, 0.8)',   # gray
+                     'delta_scan_-4' : 'rgba(127, 127, 127, 0.8)',   # gray
+                     'delta_scan_+4' : 'rgba(127+5, 127+5, 127+5, 0.8)',   # gray+5
+
                      },
                            
                            
                      'heep_coin'   : {
 
-                    '0' :  'rgba(148, 103, 189,   0.8)',  # purple  
+                    'delta_scan_-4' :  'rgba(148, 103, 189,   0.8)',  # purple
+                    'delta_scan_+4' :  'rgba(31, 119, 180,   0.8)',  # muted blue
+                         
                      },
                  },
                      
@@ -171,41 +173,41 @@ target_dict = {'target_names' : {'dummy', 'LH2', 'LD2'},
 
 
 
-
+'''
 fig = go.Figure()
 for targ in target_dict['target_names']:  
     for kin in target_dict['kinematic_study'][targ]:
-        for pmset in target_dict['pm_set'][targ]:
+        for iset in target_dict['setting'][targ]:
         
-            #print('targ,kin,pmset ---> ', targ,',',kin,',',pmset)
+            #print('targ,kin,iset ---> ', targ,',',kin,',',iset)
             # set color, pattern and line style
-            bar_color   = target_dict['color'][targ][kin][pmset]
+            bar_color   = target_dict['color'][targ][kin][iset]
             
             #print(bar_color)
             
             # define selected dataframe @ selected  (targ,kin)
-            df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin)) & (df['pm_set']==int(pmset))]
+            df_select = df[(df['target'].str.contains(targ)) & (df['kin\nstudy'].str.contains(kin)) & (df['setting']==iset)]
 
             mycustomdata = np.stack((df_select['cumulative_counts'], df_select['counts_perct_completed'], df_select['charge_perct_completed'],  df_select['target'],
-                                     df_select['kin\nstudy'], df_select['pm_set']), axis=-1)
+                                     df_select['kin\nstudy'], df_select['setting']), axis=-1)
 
 
-            print('targ,kin,pmset, cumulative_counts ---> ', targ,',',kin,',',pmset,',',df_select['cumulative_counts'])
+            print('targ,kin,setting, cumulative_counts ---> ', targ,',',kin,',',iset,',',df_select['cumulative_counts'])
        
             #print(df_select.shape[0])
             #if(df_select.shape[0]>0 and df_select.shape[0]<5):
 
     
 
-                #print('pm_set----->',df_select['pm_set'])
+                #print('setting----->',df_select['setting'])
 
             # add bar chart
-            '''
+            
             fig.add_trace(
 
                     
                 go.Bar(x=df_select['run_center'], y=df_select['BCM4A\ncharge\n[mC]'], width=df_select['run_len_ms'],
-                       name="%s, %s, %s" % (targ, kin, pmset), marker = {'color' : bar_color}, 
+                       name="%s, %s, %s" % (targ, kin, iset), marker = {'color' : bar_color}, 
 
                        #hovertext = "%s" % df_select['run\nnumber']
                        hovertemplate="run_number    :%s<br>"
@@ -273,7 +275,7 @@ for targ in target_dict['target_names']:
                             
                             fig.add_trace(
                                 go.Bar(x=x_list, y=y_list, width=w_list,
-                                       name="%s, %s, %s" % (targ, kin, pmset), legendgroup='%s_%s_%s' % (targ, kin, pmset), marker = {'color' : bar_color},
+                                       name="%s, %s, %s" % (targ, kin, iset), legendgroup='%s_%s_%s' % (targ, kin, iset), marker = {'color' : bar_color},
                                        
                                        
                                        #hovertext = "%s" % df_select['run\nnumber'][index_label],
@@ -360,7 +362,7 @@ if not df_deut.empty:
 
     
     
-    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="pm_set", hover_name="run\nnumber")
+    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="setting", hover_name="run\nnumber")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
@@ -372,7 +374,7 @@ if not df_deut.empty:
     #fig2.update_layout(hovermode="x")
 
     
-    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="pm_set", hover_name="run\nnumber",  hover_data={       'real_rate':':%.2f',
+    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="setting", hover_name="run\nnumber",  hover_data={       'real_rate':':%.2f',
                                                                                                                                                      'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A\ncurrent\n[uA]'])})
     fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
     fig3.update_yaxes(matches=None)
@@ -384,7 +386,7 @@ if not df_deut.empty:
     #fig3.update_layout(hovermode="x unified")
     
     
-    fig4 = px.scatter(df_deut, x="run_center", y="beam_eff", color="pm_set", hover_name="run\nnumber")
+    fig4 = px.scatter(df_deut, x="run_center", y="beam_eff", color="setting", hover_name="run\nnumber")
     fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
     fig4.update_yaxes(matches=None)
     fig4.update_xaxes(matches=None)
@@ -395,9 +397,12 @@ if not df_deut.empty:
     #fig4.update_layout(hovermode="x unified")
     
     
-    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="pm_set", hover_name="run\nnumber", hover_data={'cumulative_charge [mC]':(':.2f', df_deut['cumulative_charge']),
-                                                                                                                                                    'statistical_goal [mC]':(':.3f', df_deut['simc_charge_goal\n[mC]']),
-                                                                                                                                                    'percentage_completed [%]':(':.2f', df_deut['charge_perct_completed'])})
+
+    # working version
+    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="setting", hover_name="run\nnumber", hover_data={'charge (this run) [mC]':(':.3f', df_deut['BCM4A\ncharge\n[mC]']),
+                                                                                                                             'cumulative_charge [mC]':(':.2f', df_deut['cumulative_charge']),
+                                                                                                                             'statistical_goal [mC]':(':.3f', df_deut['simc_charge_goal\n[mC]']),
+                                                                                                                             'percentage_completed [%]':(':.2f', df_deut['charge_perct_completed'])})
     fig5.update_layout( title={'text':'Accumulated Charge', 'x':0.5},  font=dict(size=14), yaxis_title="BCM4A Charge [mC]")
     fig5.update_yaxes(matches=None)
     fig5.update_xaxes(matches=None)
@@ -408,8 +413,10 @@ if not df_deut.empty:
     
 
     
+    
+    
 
-    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="pm_set", hover_name="run\nnumber", hover_data={ 'cumulative_counts':':.2f',
+    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="setting",  hover_name="run\nnumber", hover_data={ 'cumulative_counts':':.2f',
                                                                                                                                                     'counts (this run)':(':i', df_deut['real_counts']),
                                                                                                                                                      'count rate [Hz] (this run)':(':%.2f', df_deut['real_rate']),
                                                                                                                                                      'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A\ncurrent\n[uA]']),
