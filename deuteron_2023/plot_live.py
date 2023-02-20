@@ -36,7 +36,7 @@ def get_simc_ref(string=''):
 
 # convert csv to dataframe 
 #df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
-df = pd.read_csv("./deut-2023_runlist.csv") 
+df = pd.read_csv("./deut-2023_runlist_blank.csv") 
 
 run     = df['run']
 charge = df['BCM4A_charge'] # [mC]
@@ -433,6 +433,8 @@ if not df_deut.empty:
 
     
 
+fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'d(e,e\'p) Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
+
 
 # Write to .html
 with open('index.html', 'w') as f:
@@ -440,12 +442,12 @@ with open('index.html', 'w') as f:
 
     if not df_deut.empty:
         print('not empty')
+        f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
         #f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
         #f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
     else:
         print('empty')
