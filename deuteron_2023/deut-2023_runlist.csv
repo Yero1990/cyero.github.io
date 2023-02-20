@@ -1,0 +1,23 @@
+# E12-10-003: Deuteron Electro-Disintegration Experiment Runlist (Online)
+# Feb 24 - March 20 | 2023
+#
+# (Not-so-obvious) Header Definitions:
+# BCM4A_thrs | current [uA] : current threshold | avg. beam current
+# BCM4A_charge [mC]       : total accumulated charge
+# real_counts             : integrated counts (W or Pmiss) after all cuts
+# real_rate [Hz]          : real_counts / beam_on_target [sec] 
+# beam_energy [GeV]       : measured Hall C beam energy
+# target_mass [amu]       : mass in atomic mass units [a.m.u.]
+# (S)HMS_P [GeV/c]        : spectrometer central momentum
+# (S)HMS_Angle [deg]      : spectrometer central angle
+# PS1-PS6                 : pre-scale factor for triggers T1-T6
+# T1-T6_scl_rates [kHz]   : scaler trigger rates
+# T1-T6_accp_rates [kHz]  : accepted trigger rates
+# T1-T6_tLT               : total EDTM live time
+# (S)HMS_TrkEff           : tracking efficiencies
+# simc_counts_goal        : SIMC-based statistical goal
+# simc_charge_goal [mC]   : SIMC-based charge goal 
+#
+run,start_run,end_run,kin_study,setting,BCM4A_thrs,BCM4A_current,BCM4A_charge,real_counts,real_rate,beam_on_target,evts_replayed,beam_energy,target,target_mass,HMS_P,HMS_Angle,SHMS_P,SHMS_Angle,PS1,PS2,PS3,PS5,PS6,T1_scl_rates,T2_scl_rates,T3_scl_rates,T5_scl_rates,T6_scl_rates,T1_ccp_rates,T2_accp_rates,T3_accp_rates,T5_accp_rates,T6_accp_rates,T1_tLT,T2_tLT,T3_tLT,T5_tLT,T6_tLT,HMS_TrkEff,SHMS_TrkEff,simc_counts_goal,simc_charge_goal,Comments
+16975,            2022-09-18 22:54:33,           2022-09-18 22:54:41,         deep,          pm_120,        >5.00,                  5.843,                    0.024,                   1.000,          0.249,         4.009,                     1000,         10.5494,    LD2,         2.014102,       3.0523,   -38.630,       8.5500,    12.200,-1,2049,33,1,-1,39.776,30.771,0.606,0.109,0.119,0.167,0.167,0.166,0.147,0.147,nan,2206.615,35.538,1.077,nan,0.995,0.973,21600.000,144.000,testing
+16976,            2022-09-18 22:55:33,           2022-09-18 23:54:43,         deep,          pm_120,        >5.00,                  7.550,                    0.046,                   1.000,          0.166,         6.011,                     1500,         10.5494,    LD2,         2.014102,       3.0523,   -38.630,       8.5500,    12.200,-1,2049,33,1,-1,51.746,39.882,0.785,0.150,0.163,0.185,0.185,0.183,0.163,0.163,nan,1979.542,31.881,0.966,nan,0.994,0.970,21600.000,144.000,duplicated

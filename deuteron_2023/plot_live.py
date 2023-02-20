@@ -36,7 +36,7 @@ def get_simc_ref(string=''):
 
 # convert csv to dataframe 
 #df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
-df = pd.read_csv("./deut-2023_runlist_blank.csv", comment='#') 
+df = pd.read_csv("./deut-2023_runlist.csv", comment='#') 
 
 run     = df['run']
 charge = df['BCM4A_charge'] # [mC]
