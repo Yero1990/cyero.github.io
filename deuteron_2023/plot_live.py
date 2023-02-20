@@ -38,8 +38,8 @@ def get_simc_ref(string=''):
 #df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
 df = pd.read_csv("./deut-2023_runlist.csv") 
 
-run     = df['run\nnumber']
-charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
+run     = df['run']
+charge = df['BCM4A_charge'] # [mC]
 target = df['target']
 run_start = pd.to_datetime(df['start_run'])
 run_end = pd.to_datetime(df['end_run'])
@@ -56,21 +56,21 @@ df['run_len_ms'] = run_len_ms   # time corresponding to run length
 
 
 # calculate cumulative quantities
-charge_csum = df.groupby(['target', 'kin\nstudy', 'setting'])['BCM4A\ncharge\n[mC]'].cumsum() 
+charge_csum = df.groupby(['target', 'kin_study', 'setting'])['BCM4A_charge'].cumsum() 
 
 df['cumulative_charge'] = charge_csum 
 
 print(df['cumulative_charge'])
 
 #calculate total counts cumulative 
-counts_csum = df.groupby(['target', 'kin\nstudy', 'setting'])['real_counts'].cumsum() 
+counts_csum = df.groupby(['target', 'kin_study', 'setting'])['real_counts'].cumsum() 
 df['cumulative_counts'] = counts_csum
 
 
 # ---- calculate percent completion of data-----
  
 # calculate percent of charge completed
-df['charge_perct_completed'] = df['cumulative_charge'] / df['simc_charge_goal\n[mC]'] * 100.
+df['charge_perct_completed'] = df['cumulative_charge'] / df['simc_charge_goal'] * 100.
 
 # calculate percent of counts completed
 df['counts_perct_completed'] = df['cumulative_counts'] / df['simc_counts_goal'] * 100.
@@ -84,7 +84,7 @@ df['counts_per_mC_err'] =  df['real_counts'] / (np.sqrt( df['real_counts'] ) * c
 print('count_per_mC_err = ', df['counts_per_mC_err'])
 
 # calculate beam efficiency
-df['beam_eff'] = df['beam_on_target\n[sec]'] /df['run_len']
+df['beam_eff'] = df['beam_on_target'] /df['run_len']
 
 
 # re-define dataframe for special tasks
@@ -362,7 +362,7 @@ if not df_deut.empty:
 
     
     
-    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="setting", hover_name="run\nnumber")
+    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="setting", hover_name="run")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
@@ -374,8 +374,8 @@ if not df_deut.empty:
     #fig2.update_layout(hovermode="x")
 
     
-    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="setting", hover_name="run\nnumber",  hover_data={       'real_rate':':%.2f',
-                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A\ncurrent\n[uA]'])})
+    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="setting", hover_name="run",  hover_data={       'real_rate':':%.2f',
+                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A_current'])})
     fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
     fig3.update_yaxes(matches=None)
     fig3.update_xaxes(matches=None)
@@ -386,7 +386,7 @@ if not df_deut.empty:
     #fig3.update_layout(hovermode="x unified")
     
     
-    fig4 = px.scatter(df_deut, x="run_center", y="beam_eff", color="setting", hover_name="run\nnumber")
+    fig4 = px.scatter(df_deut, x="run_center", y="beam_eff", color="setting", hover_name="run")
     fig4.update_layout( title={'text':'Beam Efficiency', 'x':0.5},  font=dict(size=14), yaxis_title="efficiency")
     fig4.update_yaxes(matches=None)
     fig4.update_xaxes(matches=None)
@@ -399,9 +399,9 @@ if not df_deut.empty:
     
 
     # working version
-    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="setting", hover_name="run\nnumber", hover_data={'charge (this run) [mC]':(':.3f', df_deut['BCM4A\ncharge\n[mC]']),
+    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="setting", hover_name="run", hover_data={'charge (this run) [mC]':(':.3f', df_deut['BCM4A_charge']),
                                                                                                                              'cumulative_charge [mC]':(':.2f', df_deut['cumulative_charge']),
-                                                                                                                             'statistical_goal [mC]':(':.3f', df_deut['simc_charge_goal\n[mC]']),
+                                                                                                                             'statistical_goal [mC]':(':.3f', df_deut['simc_charge_goal']),
                                                                                                                              'percentage_completed [%]':(':.2f', df_deut['charge_perct_completed'])})
     fig5.update_layout( title={'text':'Accumulated Charge', 'x':0.5},  font=dict(size=14), yaxis_title="BCM4A Charge [mC]")
     fig5.update_yaxes(matches=None)
@@ -416,10 +416,10 @@ if not df_deut.empty:
     
     
 
-    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="setting",  hover_name="run\nnumber", hover_data={ 'cumulative_counts':':.2f',
+    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="setting",  hover_name="run", hover_data={ 'cumulative_counts':':.2f',
                                                                                                                                                     'counts (this run)':(':i', df_deut['real_counts']),
                                                                                                                                                      'count rate [Hz] (this run)':(':%.2f', df_deut['real_rate']),
-                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A\ncurrent\n[uA]']),
+                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A_current']),
                                                                                                                                                     'statistical_goal':(':i', df_deut['simc_counts_goal']),
                                                                                                                                                      'percentage_completed [%]':(':.2f', df_deut['counts_perct_completed'])})
     

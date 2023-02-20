@@ -1,45 +1,4 @@
-"run
-number",start_run,end_run,"kin
-study",setting,"BCM4A
-thrs
-[uA]","BCM4A
-current
-[uA]","BCM4A
-charge
-[mC]",real_counts,real_rate,"beam_on_target
-[sec]","evts
-replayed","beam
-energy
-[GeV]",target,"target
-mass
-[amu]","HMS_P
-[GeV/c]","HMS_Angle
-[deg]","SHMS_P
-[GeV/c]","SHMS_Angle
-[deg]",PS1,PS2,PS3,PS5,PS6,"T1
-scaler_rates
-[kHz]","T2
-scaler_rates
-[kHz]","T3
-scaler_rates
-[kHz]","T5
-scaler_rates
-[kHz]","T6
-scaler_rates
-[kHz]","T1
-accp_rates
-[kHz]","T2
-accp_rates
-[kHz]","T3
-accp_rates
-[kHz]","T5
-accp_rates
-[kHz]","T6
-accp_rates
-[kHz]",T1_tLT,T2_tLT,T3_tLT,T5_tLT,T6_tLT,"HMS
-TrkEff","SHMS
-TrkEff",simc_counts_goal,"simc_charge_goal
-[mC]",Comments
+"run",start_run,end_run,"kin_study",setting,"BCM4A_thrs","BCM4A_current","BCM4A_charge","real_counts","real_rate","beam_on_target","evts_replayed","beam_energy",target,"target_mass","HMS_P","HMS_Angle","SHMS_P","SHMS_Angle",PS1,PS2,PS3,PS5,PS6,"T1_scaler_rates","T2_scaler_rates","T3_scaler_rates","T5_scaler_rates","T6_scaler_rates","T1_accp_rates","T2_accp_rates","T3_accp_rates","T5_accp_rates","T6_accp_rates",T1_tLT,T2_tLT,T3_tLT,T5_tLT,T6_tLT,"HMS_TrkEff","SHMS_TrkEff",simc_counts_goal,"simc_charge_goal",Comments
 16965,            2022-09-18 17:23:02,           2022-09-18 17:53:27,         heep_singles,       delta_scan_-4,        >5.00,                  5.053,                    0.010,                65.000,          nan,         2.001,                     5000,         10.5494,    LH2,         1.007940,       3.1450,   -35.755,       8.5500,    12.944,513,17,-1,-1,-1,18.458,14.588,0.282,0.087,0.094,2.005,1.987,0.011,0.009,0.011,76.950,2.550,nan,nan,nan,1.000,0.982,500,nan,no_comments
 16966,            2022-09-18 18:00:03,           2022-09-18 18:30:23,         heep_coin,          delta_scan_-8,        >5.00,                  9.974,                    0.201,                   45.000,          2.247,         20.024,                     9000,         10.5494,    LH2,         1.007940,       2.4170,   -41.812,       8.5500,    10.435,513,513,5,1,-1,36.897,29.004,0.567,0.199,0.214,0.364,0.345,0.300,0.219,0.221,530.955,530.955,5.175,1.035,nan,0.996,0.979,700,nan,
 16967,            2022-09-18 18:31:03,           2022-09-18 18:45:23,         heep_coin,          delta_scan_-4,        >5.00,                  9.974,                    0.201,                   45.000,          2.247,         20.024,                     9000,         10.5494,    LH2,         1.007940,       2.4170,   -41.812,       8.5500,    10.435,513,513,5,1,-1,36.897,29.004,0.567,0.199,0.214,0.364,0.345,0.300,0.219,0.221,530.955,530.955,5.175,1.035,nan,0.996,0.979,700,nan,
