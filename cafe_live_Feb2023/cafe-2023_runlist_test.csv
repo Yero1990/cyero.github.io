@@ -1,0 +1,57 @@
+"run
+number",start_run,end_run,"kin
+study","beam_on_target
+[sec]","evts
+replayed","beam
+energy
+[GeV]",target,"target
+mass
+[amu]","HMS_P
+[GeV/c]","HMS_Angle
+[deg]","SHMS_P
+[GeV/c]","SHMS_Angle
+[deg]","BCM4A
+thrs
+[uA]","BCM4A
+current
+[uA]","BCM4A
+charge
+[mC]","integrated
+luminosity
+[fb^-1]",lumiNorm_counts[fb],PS1,PS2,PS3,PS5,PS6,"T1
+scaler_rates
+[kHz]","T2
+scaler_rates
+[kHz]","T3
+scaler_rates
+[kHz]","T5
+scaler_rates
+[kHz]","T6
+scaler_rates
+[kHz]","T1
+accp_rates
+[kHz]","T2
+accp_rates
+[kHz]","T3
+accp_rates
+[kHz]","T5
+accp_rates
+[kHz]","T6
+accp_rates
+[kHz]",T1_tLT,T2_tLT,T3_tLT,T5_tLT,T6_tLT,"HMS
+TrkEff","SHMS
+TrkEff","heep_singles
+counts","heep_singles
+rates [Hz]","heep_coin
+counts","heep_coin
+rates [Hz]","MF_real
+counts","MF_real
+rates [Hz]","SRC_real
+counts","SRC_real
+rates [Hz]",simc_counts_goal,"simc_charge_goal
+[mC]","simc_integrated
+luminosity
+[fb^-1]",simc_lumiNorm_counts[fb],Comments
+17082,            2022-09-25 19:15:56,           2022-09-25 19:16:30,           SRC,         10.027,          1000,       10.5494,     C12,        12.010700,      1.3250,   -66.400,       8.5500,    8.300,        >5.00,        14.406,         0.144,          0.024,                  0.0000 ,-1,1025,65,1,-1,31.130,24.700,1.466,0.005,0.008,0.034,0.034,0.032,0.006,0.006,nan,1056.061,66.970,1.030,nan,1.000,1.000,nan,nan,nan,nan,nan,nan,0.00,0.000,5000.000,2016.000,330.5729,15.1253,Testing_the_online_prod_replay_using_C12_run_17082
+20771,            2023-02-20 08:36:07,           2023-02-20 08:36:45,           SRC,         12,          1000,       10.5494,     Au197,        196.966570,      1.8200,   -48.300,       8.5500,    8.300,        >5.00,        nan,         0.000,          0.000,                  nan ,-1,-1,1,-1,-1,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,0.00,nan,7000.000,5760.000,44.4853,157.3555,Using_cosmic_run_20771_pretend_it_to_be_Au_for_a_test_
+20773,            2023-02-20 08:36:55,           2023-02-20 09:36:45,           SRC,         200,          1000,       10.5494,     Au197,        196.966570,      1.8200,   -48.300,       8.5500,    8.300,        >5.00,        nan,         0.000,          0.000,                  nan ,-1,-1,1,-1,-1,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,nan,0.00,nan,7000.000,5760.000,44.4853,157.3555,Using_cosmic_run_20771_pretend_it_to_be_Au_for_a_test_
