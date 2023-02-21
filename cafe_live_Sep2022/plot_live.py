@@ -116,7 +116,7 @@ df_cafe = df[df["kin\nstudy"].str.contains("MF") | df["kin\nstudy"].str.contains
 
 
 
-cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 'C12', 'Ca40', 'Ca48', 'Ti48', 'Fe54'},
+cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_optics', 'C12', 'Ca40', 'Ca48', 'Ti48', 'Fe54', 'Au197'},
              
              'kinematic_study' : {
                  'dummy': {'MF', 'SRC'},
@@ -130,7 +130,9 @@ cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_
                  'Ca40': {'MF', 'SRC'},
                  'Ca48': {'MF', 'SRC'},
                  'Ti48': {'MF', 'SRC'},
-                 'Fe54': {'MF', 'SRC'},    
+                 'Fe54': {'MF', 'SRC'},
+                 'Au197': {'MF', 'SRC'},
+                 
              },
              
              'color' : {
@@ -143,6 +145,7 @@ cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_
                  # rgb(44, 160, 44)   green
                  # rgb(148, 103, 189) purple
                  # rgb(214, 39, 40)   red
+                 # rgb(255, 215,0)     gold
                  
                  'dummy' : {'MF'      : 'rgba(255,248,220, 0.8)' ,          # cornsilk
                            'SRC'      : 'rgba(255,248,220, 0.8)'},
@@ -179,7 +182,10 @@ cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_
                             'SRC'      : 'rgba(210,105,30, 0.8)'},
                  
                  'Fe54' : { 'MF'       : 'rgba(0,255,0, 0.8)',    # green (lime)  
-                            'SRC'      : 'rgba(0,255,0, 0.8)'},        
+                            'SRC'      : 'rgba(0,255,0, 0.8)'},
+                 
+                 'Au197': { 'MF'       : 'rgba(255, 215,0, 0.8)',    # gold  
+                            'SRC'      : 'rgba(255, 215,0, 0.8)'},   
              },
              
              'pattern' : {
@@ -217,7 +223,10 @@ cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_
                  
                  
                  'Fe54' : { 'MF'       : '', 
-                            'SRC'      : '/'},  
+                            'SRC'      : '/'},
+                  
+                 'Au197' : { 'MF'       : '', 
+                            'SRC'      : '/'},
                  
              },
              
@@ -269,6 +278,9 @@ cafe_dict = {'target_names' : {'dummy', 'LH2', 'LD2', 'Be9', 'B10', 'B11', 'C12_
                     
                  'Fe54' : { 'MF'       : 'solid', 
                             'SRC'      : 'dash'},
+
+                 'Au197': {'MF'       : 'solid', 
+                           'SRC'      : 'dash'},
                  
              },
 }
