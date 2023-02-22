@@ -17,7 +17,7 @@ exp_end = datetime(2018,4,9).timestamp()
 
 # convert csv to dataframe 
 #df = pd.read_csv("../../cafe_online_replay/UTILS_CAFE/runlist/cafe-2022_runlist.csv") 
-df = pd.read_csv("./cafe-2023_runlist_test.csv") 
+df = pd.read_csv("./cafe-2023_runlist.csv") 
 
 run     = df['run\nnumber']
 charge = df['BCM4A\ncharge\n[mC]'] # convert to micro-coulomb for visualization purpose
