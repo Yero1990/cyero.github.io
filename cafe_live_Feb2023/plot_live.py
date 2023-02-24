@@ -75,7 +75,7 @@ df['lumi_perct_completed'] = df['cumulative_luminosity'] / df['simc_integrated\n
 df['lumiNorm_perct_completed'] = df['cumulative_lumiNorm'] / df['simc_lumiNorm_counts[fb]'] * 100.
 
 # calculate percent of counts completed
-df['counts_perct_completed'] = df['cumulative_counts'] / df['simc_counts_goal'] * 100.
+df['counts_perct_completed'] = df['cumulative_counts'] / df['simc_counts_goal'] * 100. 
 
 
 #--------------------------------------------------
