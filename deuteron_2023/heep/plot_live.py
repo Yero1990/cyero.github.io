@@ -433,7 +433,7 @@ if not df_deut.empty:
 
     
 
-fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'d(e,e\'p) Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5, 'y':0.98},  font=dict(size=12), yaxis_title="Total Counts")
+fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'h(e,e\'p) delta scan Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5, 'y':0.98},  font=dict(size=12), yaxis_title="Total Counts")
 
 
 # Write to .html
