@@ -362,7 +362,7 @@ if not df_deut.empty:
 
     
     
-    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="setting", hover_name="run")
+    fig2 = px.scatter(df_deut, x="run_center", y="counts_per_mC", error_y="counts_per_mC_err", color="setting", facet_col="kin_study", hover_name="run")
     fig2.update_layout( title={'text':'Charge Normalized Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Counts / mC")
     fig2.update_yaxes(matches=None)
     fig2.update_xaxes(matches=None)
@@ -374,7 +374,7 @@ if not df_deut.empty:
     #fig2.update_layout(hovermode="x")
 
     
-    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="setting", hover_name="run",  hover_data={       'real_rate':':%.2f',
+    fig3 = px.scatter(df_deut, x="run_center", y="real_rate", color="setting", hover_name="run",  facet_col="kin_study", hover_data={       'real_rate':':%.2f',
                                                                                                                                                      'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A_current'])})
     fig3.update_layout( title={'text':'Real Count Rates', 'x':0.5},  font=dict(size=14), yaxis_title="Count Rate [Hz]")
     fig3.update_yaxes(matches=None)
@@ -399,7 +399,7 @@ if not df_deut.empty:
     
 
     # working version
-    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="setting", hover_name="run", hover_data={'charge (this run) [mC]':(':.3f', df_deut['BCM4A_charge']),
+    fig5 = px.scatter(df_deut, x="run_center", y="cumulative_charge", color="setting", hover_name="run", facet_col="kin_study", hover_data={'charge (this run) [mC]':(':.3f', df_deut['BCM4A_charge']),
                                                                                                                              'cumulative_charge [mC]':(':.2f', df_deut['cumulative_charge']),
                                                                                                                              'statistical_goal [mC]':(':.3f', df_deut['simc_charge_goal']),
                                                                                                                              'percentage_completed [%]':(':.2f', df_deut['charge_perct_completed'])})
@@ -416,7 +416,7 @@ if not df_deut.empty:
     
     
 
-    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="setting",  hover_name="run", hover_data={ 'cumulative_counts':':.2f',
+    fig8 = px.scatter(df_deut, x="run_center", y="cumulative_counts", color="setting",  hover_name="run", facet_col="kin_study", hover_data={ 'cumulative_counts':':.2f',
                                                                                                                                                     'counts (this run)':(':i', df_deut['real_counts']),
                                                                                                                                                      'count rate [Hz] (this run)':(':%.2f', df_deut['real_rate']),
                                                                                                                                                      'beam_current [uA] (this run)':(':%.2f', df_deut['BCM4A_current']),
@@ -433,7 +433,7 @@ if not df_deut.empty:
 
     
 
-fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'d(e,e\'p) Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
+fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'d(e,e\'p) Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5, 'y':0.98},  font=dict(size=12), yaxis_title="Total Counts")
 
 
 # Write to .html
