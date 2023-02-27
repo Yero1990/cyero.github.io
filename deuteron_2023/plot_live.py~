@@ -31,7 +31,7 @@ exp_end = datetime(2023,3,20).timestamp()
 
 
 # convert csv to dataframe 
-df = pd.read_csv("../deut-2023_runlist.csv", comment='#') 
+df = pd.read_csv("./deut-2023_runlist.csv", comment='#') 
 
 run     = df['run']
 charge = df['BCM4A_charge'] # [mC]
@@ -42,6 +42,7 @@ run_center = run_start + 0.5*(run_end-run_start)
 run_len = (run_end-run_start)                   # run length 
 run_len_ms = run_len.dt.total_seconds() * 1.e3 # run length  in millisecond (required for width)
 
+print('run_start=', run_start)
 # add new columns to dataframe
 df['run_center'] = run_center   # time corresponding to middle of run
 df['run_len'] = run_len.dt.total_seconds()   # run length in sec
@@ -85,10 +86,12 @@ df['beam_eff'] = df['beam_on_target'] /df['run_len']
 
 
 # re-define dataframe for special tasks
-if kin_study=='heep':
+if kin_study=="heep":
+    title='h(e,e\'p) delta scan'
     my_df = df[ df["kin_study"].str.contains("heep") ]
 
-elif kin_study=='deep': 
+elif kin_study=="deep":
+    title='d(e,e\'p) '
     my_df = df[ df["kin_study"].str.contains("deep") ]
 else:
     print('\n Please enter one of the following arguments: heep, deep\n'
@@ -165,12 +168,14 @@ if not my_df.empty:
     
     
 
-    fig8 = px.scatter(my_df, x="run_center", y="cumulative_counts", color="setting",  hover_name="run", facet_col="kin_study", hover_data={ 'cumulative_counts':':.2f',
-                                                                                                                                                    'counts (this run)':(':i', my_df['real_counts']),
-                                                                                                                                                     'count rate [Hz] (this run)':(':%.2f', my_df['real_rate']),
-                                                                                                                                                     'beam_current [uA] (this run)':(':%.2f', my_df['BCM4A_current']),
-                                                                                                                                                    'statistical_goal':(':i', my_df['simc_counts_goal']),
-                                                                                                                                                     'percentage_completed [%]':(':.2f', my_df['counts_perct_completed'])})
+    fig8 = px.scatter(my_df, x="run_center", y="cumulative_counts", color="setting",  hover_name="run", facet_col="kin_study", hover_data={               'cumulative_counts':':.2f',                                                                                                                                                          
+                                                                                                                                                          'counts (this run)':(':i', my_df['real_counts']),
+                                                                                                                                                          'count rate [Hz] (this run)':(':%.2f', my_df['real_rate']),
+                                                                                                                                                          'beam_current [uA] (this run)':(':%.2f', my_df['BCM4A_current']),
+                                                                                                                                                         'statistical_goal':(':i', my_df['simc_counts_goal']),
+                                                                                                                                                           'percentage_completed [%]':(':.2f', my_df['counts_perct_completed']),
+                                                                                                                                                          'start_of_run':(':%s', my_df['start_run'].to_string(index=False)), 
+                                                                                                                                           })
     
     fig8.update_layout( title={'text':'Total A(e,e\'p) Counts', 'x':0.5},  font=dict(size=14), yaxis_title="Total Counts")
     fig8.update_yaxes(matches=None)
@@ -182,7 +187,7 @@ if not my_df.empty:
 
     
 
-fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':'h(e,e\'p) delta scan Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5, 'y':0.98},  font=dict(size=12), yaxis_title="Total Counts")
+fig8.update_layout(legend_title_text = "Kinematic Configuration", title={'text':title+' scan Run Summary (Feb 24 - Mar 30, 2023) <br> Total  A(e,e\'p) Counts', 'x':0.5, 'y':0.98},  font=dict(size=12), yaxis_title="Total Counts")
 
 
 path_to_index=kin_study+'/index.html'
@@ -194,11 +199,9 @@ with open(path_to_index, 'w') as f:
     if not my_df.empty:
         print('not empty')
         f.write(fig8.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))        
         f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
-        f.write(fig5.to_html(full_html=False, include_plotlyjs='cdn'))
-        #f.write(fig6.to_html(full_html=False, include_plotlyjs='cdn'))
-        #f.write(fig7.to_html(full_html=False, include_plotlyjs='cdn'))
     else:
         print('empty')
