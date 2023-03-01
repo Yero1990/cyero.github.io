@@ -8,7 +8,7 @@ import chart_studio.plotly as charts
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import numpy as np
-
+import pandas as pandasForSortingCSV
 
 #user argument (deep or heep)
 kin_study = sys.argv[1]
@@ -29,9 +29,13 @@ exp_end = datetime(2023,3,20).timestamp()
 
 
 
-
 # convert csv to dataframe 
-df = pd.read_csv("./deut-2023_runlist.csv", comment='#') 
+df = pandasForSortingCSV.read_csv("./deut-2023_runlist.csv", comment='#') 
+
+# sort data frame based on 1st column (run number)
+df.sort_values(df.columns[0], 
+                    axis=0,
+                    inplace=True)
 
 run     = df['run']
 charge = df['BCM4A_charge'] # [mC]
@@ -93,6 +97,7 @@ if kin_study=="heep":
 elif kin_study=="deep":
     title='d(e,e\'p) '
     my_df = df[ df["kin_study"].str.contains("deep") ]
+    my_df["real_rate"] = my_df["real_rate"] * 3600. # convert to counts / hour
 else:
     print('\n Please enter one of the following arguments: heep, deep\n'
           'e,g, ipython plot_line.py heep \n')
