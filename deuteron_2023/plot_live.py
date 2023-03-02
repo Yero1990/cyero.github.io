@@ -236,8 +236,64 @@ if not my_df.empty:
 
 
 
-
+    fig9 = px.scatter(my_df, x="run_center", y="cumulative_time", color="setting",  hover_name="run", facet_col="kin_study", hover_data={               'cumulative_time':':.3f',
+                                                                                                                                                        'run_start':(':%s', my_df['start_run'].astype("string")),
+                                                                                                                                                        'run_end':(':%s', my_df['end_run'].astype("string")),
+                                                                                                                                                          'beam_on_time [hrs] (this run)':(':.2f', my_df['beam_on_target']),
+                                                                                                                                                          'count rate [per hr] (this run)':(':%.2f', my_df['real_rate']),
+                                                                                                                                                          'beam_current [uA] (this run)':(':%.2f', my_df['BCM4A_current']),
+                                                                                                                                                         'statistical_goal':(':i', my_df['simc_counts_goal']),
+                                                                                                                                                           'percentage_completed [%]':(':.2f', my_df['counts_perct_completed']),
+                                                                                                                                           })
     
+    fig9.update_layout( title={'text':'Total Beam-on-Target Time', 'x':0.5},  font=dict(size=14), yaxis_title="Total Time [hrs]")
+    fig9.update_yaxes(matches=None)
+    fig9.update_xaxes(matches=None)
+    fig9.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig9.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
+
+
+
+    fig10 = px.scatter(my_df, x="run_center", y="T6_tLT", color="setting",  hover_name="run", facet_col="kin_study", hover_data={                       'T6_tLT':':.3f',
+                                                                                                                                                        'beam_current [uA]':(':.3f', my_df['BCM4A_current']),
+                                                                                                                                                        'run_start':(':%s', my_df['start_run'].astype("string")),
+                                                                                                                                                        'run_end':(':%s', my_df['end_run'].astype("string")),
+                                                                                                                                                    
+                                                                                                                                 })
+    
+    fig10a = px.scatter(my_df, x="run_center", y="HMS_TrkEff", color="setting",  hover_name="run", facet_col="kin_study", hover_data={                  'HMS_TrkEff':':.3f',
+                                                                                                                                                        'beam_current [uA]':(':.3f', my_df['BCM4A_current']),
+                                                                                                                                                        'run_start':(':%s', my_df['start_run'].astype("string")),
+                                                                                                                                                        'run_end':(':%s', my_df['end_run'].astype("string")),
+                                                                                                                                                    
+                                                                                                                                      })
+    
+    fig10.add_trace(fig10a.data[0])
+    fig10.add_trace(fig10a.data[1])
+    fig10.add_trace(fig10a.data[2])
+    fig10.update_layout(showlegend=False)
+    fig10b = px.scatter(my_df, x="run_center", y="SHMS_TrkEff", color="setting",  hover_name="run", facet_col="kin_study", hover_data={                  'SHMS_TrkEff':':.3f',
+                                                                                                                                                         'beam_current [uA]':(':.3f', my_df['BCM4A_current']),
+                                                                                                                                                        'run_start':(':%s', my_df['start_run'].astype("string")),
+                                                                                                                                                        'run_end':(':%s', my_df['end_run'].astype("string")),
+                                                                                                                                                    
+                                                                                                                                 })
+    fig10b.update_layout(showlegend=False)
+    fig10.add_trace(fig10b.data[0])
+    fig10.add_trace(fig10b.data[1])
+    fig10.add_trace(fig10b.data[2])
+    
+        
+    fig10.update_layout( title={'text':'Efficiencies', 'x':0.5},  font=dict(size=14), yaxis_title="Efficiency")
+    fig10.update_yaxes(matches=None)
+    fig10.update_xaxes(matches=None)
+    fig10.for_each_yaxis(lambda yaxis: yaxis.update(showticklabels=True))
+    fig10.update_traces(marker=dict(size=12,
+                              line=dict(width=2,
+                                        color='DarkSlateGrey')), mode="markers+lines")
+
 path_to_index=kin_study+'/index.html'
 
 # Write to .html
@@ -252,5 +308,7 @@ with open(path_to_index, 'w') as f:
         f.write(fig2.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig3.to_html(full_html=False, include_plotlyjs='cdn'))
         f.write(fig4.to_html(full_html=False, include_plotlyjs='cdn'))
+        f.write(fig10.to_html(full_html=False, include_plotlyjs='cdn'))
+
     else:
         print('empty')
