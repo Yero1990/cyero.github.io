@@ -9,6 +9,7 @@ import plotly.graph_objects as go
 from datetime import datetime, timedelta
 import numpy as np
 import pandas as pandasForSortingCSV
+import chart_studio.tools as tls
 
 #user argument (deep or heep)
 kin_study = sys.argv[1]
@@ -312,3 +313,5 @@ with open(path_to_index, 'w') as f:
 
     else:
         print('empty')
+
+
