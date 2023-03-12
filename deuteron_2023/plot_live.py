@@ -275,6 +275,8 @@ if not my_df.empty:
     fig10.add_trace(fig10a.data[1])
     fig10.add_trace(fig10a.data[2])
     fig10.update_layout(showlegend=False)
+
+
     fig10b = px.scatter(my_df, x="run_center", y="SHMS_TrkEff", color="setting",  hover_name="run", facet_col="kin_study", hover_data={                  'SHMS_TrkEff':':.3f',
                                                                                                                                                          'beam_current [uA]':(':.3f', my_df['BCM4A_current']),
                                                                                                                                                         'run_start':(':%s', my_df['start_run'].astype("string")),
