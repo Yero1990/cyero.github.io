@@ -104,8 +104,13 @@ if kin_study=="heep":
 elif kin_study=="deep":
     title='d(e,e\'p) '
     my_df = df[ df["kin_study"].str.contains("deep") ]
+    
+elif kin_study=="lumi":
+    title='d(e,e\'p) luminosity scan'
+    my_df = df[ df["kin_study"].str.contains("lumi") ]
+    
 else:
-    print('\n Please enter one of the following arguments: heep, deep\n'
+    print('\n Please enter one of the following arguments: heep, deep, lumi\n'
           'e,g, ipython plot_line.py heep \n')
 
     exit()
