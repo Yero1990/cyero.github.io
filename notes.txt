@@ -43,3 +43,20 @@ targetfac = 5.88 * 1e23 nucleons / cm^2  * (1e-24 cm^2 / 1barn)  = 0.588 barns^-
 
 Now, say we have found Be9 to have a (e,e'p) rate for mean-field of dN/dt = 138 Hz, and charge accumulated of 80 mC, this means that
 the rough cross section is: sig = 138 Hz / (80 mC / 0.588 barns^-1) = 1.0143 s^-1 barns^-1 per milliCoulomb
+
+
+
+
+Interesting.  I looked at the 50k and 200k replay files for run 21072 under dir:  ./ROOTfiles/shms50k/
+and did not find anything strange.  The pedestals are mostly within 125 to 145 mV, except blocks neighboring pmt 120
+
+I think what happened is, that since this compares the pedestal to a golden run, it may be that at the time the golden
+run was determined, we did not really use high stats, but rather a 50k replay, and it may have been that some of the
+pedestals were missing due to low stats, and then when you replayed the high stats run, all of a sudden more blocks had
+non-zero stats and was compared to a pedestal from before, which had zero stats, and so you get more pedestals that disagree
+with the golden run.  
+
+Maybe what should be done is to re-do the 200k replay but using the golden run flag, to redefine this run as golden and then compare
+it to future runs.  You can do this as follows:
+$ ./run_coin_shms.sh <run_number> <event_number> set-golden
+(see https://github.com/Yero1990/deut_online_replay/wiki/Deuteron:-Instructions-for-Shift-Takers)
